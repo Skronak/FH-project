@@ -11,6 +11,8 @@ import com.ohmy.game.MyOhMyGame;
 
 import java.util.ArrayList;
 
+import javax.xml.soap.Text;
+
 public class MyAssetManager implements Disposable {
 
     private AssetManager assetManager;
@@ -41,6 +43,7 @@ public class MyAssetManager implements Disposable {
         assetManager.load("sprite/monster/monster2.png", Texture.class);
         assetManager.load("sprite/monster/monster3.png", Texture.class);
         assetManager.load("sprite/monster1_anger.png", Texture.class);
+        assetManager.load("sprite/arrowIcon.png", Texture.class);
     }
 
     public void loadJSONFile(){

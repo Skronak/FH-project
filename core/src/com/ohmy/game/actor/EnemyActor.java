@@ -51,11 +51,11 @@ public class EnemyActor extends Group {
         text.setWrap(true);
         text.setSize(dialogImage.getWidth()-70,dialogImage.getHeight()/2);
         text.setAlignment(1,1);
-        text.setPosition(dialogImage.getX()+40, dialogImage.getY()+70);
+        text.setPosition(dialogImage.getX()+dialogImage.getWidth()/2-text.getWidth()/2, dialogImage.getY()+dialogImage.getHeight()/2-text.getHeight()/6);
 
-        nextImage = new Image(new TextureRegion(new Texture(Gdx.files.internal("sprite/arrowIcon.png"))));
+        nextImage = new Image(new TextureRegion(gameManager.getAssetManager().get("sprite/arrowIcon.png", Texture.class)));
         nextImage.setSize(30,50);
-        nextImage.setPosition(text.getX()+text.getWidth()-10, text.getY()+text.getHeight()/3);
+        nextImage.setPosition(text.getX()+text.getWidth(), text.getY()+text.getHeight()/4);
 
         this.addActor(enemyBaseActor);
         this.addActor(dialogImage);
