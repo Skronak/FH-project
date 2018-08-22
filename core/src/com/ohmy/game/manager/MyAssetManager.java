@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Json;
 import com.ohmy.game.DialogEntity;
 import com.ohmy.game.MyOhMyGame;
+import com.ohmy.game.actor.EnemyEntity;
 
 import java.util.ArrayList;
 
@@ -24,6 +25,7 @@ public class MyAssetManager implements Disposable {
     private ArrayList<DialogEntity> playerRespondList;
     private ArrayList<DialogEntity> monsterAttackList;
     private ArrayList<DialogEntity> monsterRespondList;
+    private ArrayList<EnemyEntity> monsterList;
 
     public MyAssetManager(MyOhMyGame game) {
          this.game = game;
@@ -42,7 +44,7 @@ public class MyAssetManager implements Disposable {
         assetManager.load("sprite/monster/monster1.png", Texture.class);
         assetManager.load("sprite/monster/monster2.png", Texture.class);
         assetManager.load("sprite/monster/monster3.png", Texture.class);
-        assetManager.load("sprite/monster1_anger.png", Texture.class);
+        assetManager.load("sprite/monster/monster1_anger.png", Texture.class);
         assetManager.load("sprite/arrowIcon.png", Texture.class);
     }
 
@@ -56,6 +58,9 @@ public class MyAssetManager implements Disposable {
 
         monsterAttackList = new ArrayList<DialogEntity>();
         monsterAttackList = json.fromJson(ArrayList.class, DialogEntity.class, Gdx.files.internal("json/monster_attack.json"));
+
+        monsterList = new ArrayList<EnemyEntity>();
+        monsterList = json.fromJson(ArrayList.class, EnemyEntity.class, Gdx.files.internal("json/monster.json"));
     }
 
     public void loadSound(){
@@ -100,5 +105,9 @@ public class MyAssetManager implements Disposable {
 
     public void setCurrentStatus(int currentStatus) {
         this.currentStatus = currentStatus;
+    }
+
+    public ArrayList<EnemyEntity> getMonsterList() {
+        return monsterList;
     }
 }

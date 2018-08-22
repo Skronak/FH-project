@@ -15,6 +15,7 @@ import com.ohmy.game.Constants;
 import com.ohmy.game.DialogEntity;
 import com.ohmy.game.GameInfos;
 import com.ohmy.game.actor.DialogGroup;
+import com.ohmy.game.actor.EnemyEntity;
 import com.ohmy.game.screen.GameScreen;
 import com.ohmy.game.MyOhMyGame;
 import com.ohmy.game.PlayerInfo;
@@ -57,7 +58,7 @@ public class GameManager {
         gameInfos = new GameInfos(this);
 
         // INIT THE SCENE
-        initEnemyActor();
+        loadEnemyActor(0);
 
         // BEGIN THE GAME
         executeTurn();
@@ -161,17 +162,9 @@ public class GameManager {
         gameScreen.getDialogHolderGroup().setVisible(true);
     }
 
-    /**
-     * On Screen
-     */
-    public void initEnemyActor() {
-        gameScreen.getEnemyActor().init();
-    //    Image image = new Image(assetManager.get("sprite/bulle.png",Texture.class));
-    //    int index = (int)(Math.random() * (assetManager.getMonsterAttackList().size()-1));
-    //    DialogEntity dialogEntity = assetManager.getMonsterAttackList().get(index);
-    //    EnemyDialogGroup enemyDialogGroup = new EnemyDialogGroup(image,assetManager.getSkin(), dialogEntity, this, 800,500);
-    //    gameScreen.getEnemyDialogHolderGroup().addActor(enemyDialogGroup);
-    //    gameScreen.getEnemyDialogHolderGroup().setVisible(true);
+    public void loadEnemyActor(int id){
+        EnemyEntity enemyEntity = assetManager.getMonsterList().get(id);
+        gameScreen.getEnemyActor().init(enemyEntity);
     }
 
     public void validatePlayerChoice(DialogEntity dialogEntity) {

@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.ohmy.game.Constants;
 import com.ohmy.game.actor.AnimatedBaseActor;
@@ -29,7 +30,7 @@ public class GameScreen implements Screen {
 
     private Stage stage;
     private OrthographicCamera camera;
-    private StretchViewport viewport;
+    private FitViewport viewport;
     private InputMultiplexer inputMultiplexer;
     private GameManager gameManager;
     private Group dialogHolderGroup;
@@ -38,8 +39,7 @@ public class GameScreen implements Screen {
 
     public GameScreen(GameManager gameManager){
         this.gameManager = gameManager;
-        camera = new OrthographicCamera(Constants.V_WIDTH, Constants.V_HEIGHT);
-        viewport = new StretchViewport(Constants.V_WIDTH, Constants.V_HEIGHT, camera);
+        viewport = new FitViewport(Constants.V_WIDTH, Constants.V_HEIGHT);
         stage = new Stage(viewport);
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(stage);
@@ -56,6 +56,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+       viewport.apply(true);
+
        enemyActor = new EnemyActor(gameManager);
        enemyActor.setPosition(Constants.V_WIDTH*.6f,200);
        enemyActor.setScale(0.75f,0.75f);
@@ -72,7 +74,7 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
         Gdx.gl.glClearColor( 1,1,1,1 );
-        camera.update();
+
         stage.draw();
         stage.act();
     }

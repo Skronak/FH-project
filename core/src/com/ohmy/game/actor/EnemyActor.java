@@ -16,14 +16,24 @@ import com.ohmy.game.DialogEntity;
 import com.ohmy.game.manager.GameManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Actor renderer on screen corresponding
+ * to the actual enemy
+ *
+ */
 public class EnemyActor extends Group {
+    private int id;
+    private String name;
+    private Animation idleAnimation;
+    private Animation angerAnimation;
     private int calm;
     private int anger;
     private int pleased;
     private int hp;
 
-    private AnimatedBaseActor animatedBaseActor;
+    private AnimatedBaseActor enemyBaseActor;
     private Image dialogImage;
     private int currentAttitude;
     private GameManager gameManager;
@@ -35,14 +45,7 @@ public class EnemyActor extends Group {
     public EnemyActor(GameManager gameManager){
         this.gameManager = gameManager;
 
-        AnimatedBaseActor enemyBaseActor = new AnimatedBaseActor();
-        Array<TextureRegion> framesEnemyList=new Array<TextureRegion>();
-        framesEnemyList.add(new TextureRegion(gameManager.getAssetManager().get("sprite/monster/monster0.png", Texture.class)));
-        framesEnemyList.add(new TextureRegion(gameManager.getAssetManager().get("sprite/monster/monster1.png", Texture.class)));
-        framesEnemyList.add(new TextureRegion(gameManager.getAssetManager().get("sprite/monster/monster2.png", Texture.class)));
-        framesEnemyList.add(new TextureRegion(gameManager.getAssetManager().get("sprite/monster/monster3.png", Texture.class)));
-        Animation enemyIdleAnimation = new Animation(0.5f,framesEnemyList, Animation.PlayMode.LOOP_PINGPONG);
-        enemyBaseActor.storeAnimation("idle",enemyIdleAnimation);
+        enemyBaseActor = new AnimatedBaseActor();
 
         dialogImage = new Image(gameManager.getAssetManager().get("sprite/bulle.png",Texture.class));
         dialogImage.setPosition(250,this.getHeight()+350);
@@ -72,12 +75,26 @@ public class EnemyActor extends Group {
         this.addListener(touchListener);
     }
 
-    public void init() {
+    public void init(EnemyEntity enemyEntity) {
         calm=0;
         anger=0;
         pleased=0;
         hp=0;
         currentText=0;
+
+        Array<TextureRegion> enemyIdleFramesList=new Array<TextureRegion>();
+        for (String frame :enemyEntity.getIdleFrames()){
+            enemyIdleFramesList.add(new TextureRegion(gameManager.getAssetManager().get("sprite/monster/"+frame, Texture.class)));
+        }
+        idleAnimation = new Animation(0.5f,enemyIdleFramesList, Animation.PlayMode.LOOP_PINGPONG);
+        enemyBaseActor.storeAnimation("idle",idleAnimation);
+
+        Array<TextureRegion> enemyAngerFramesList=new Array<TextureRegion>();
+        for (String frame :enemyEntity.getAngerFrames()){
+            enemyAngerFramesList.add(new TextureRegion(gameManager.getAssetManager().get("sprite/monster/"+frame, Texture.class)));
+        }
+        angerAnimation = new Animation(0.5f,enemyAngerFramesList, Animation.PlayMode.LOOP_PINGPONG);
+
     }
 
     public void speak() {
