@@ -4,23 +4,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.ohmy.game.Constants;
-import com.ohmy.game.actor.AnimatedBaseActor;
-import com.ohmy.game.actor.EnemyActor;
+import com.ohmy.game.actor.MonsterActor;
 import com.ohmy.game.manager.GameManager;
-
-import java.util.ArrayList;
-
-import static com.badlogic.gdx.Gdx.files;
 
 /**
  * Created by Skronak on 20/11/2017.
@@ -29,24 +25,22 @@ import static com.badlogic.gdx.Gdx.files;
 public class GameScreen implements Screen {
 
     private Stage stage;
-    private OrthographicCamera camera;
-    private FitViewport viewport;
     private InputMultiplexer inputMultiplexer;
     private GameManager gameManager;
     private Group dialogHolderGroup;
-    private Group enemyDialogHolderGroup;
-    private EnemyActor enemyActor;
+    private MonsterActor monsterActor;
+    private Image backgroundImage;
+    private Image characterImage;//TODO A remplacer par animatedActor
 
     public GameScreen(GameManager gameManager){
         this.gameManager = gameManager;
-        viewport = new FitViewport(Constants.V_WIDTH, Constants.V_HEIGHT);
+        ExtendViewport viewport = new ExtendViewport(Constants.V_WIDTH, Constants.V_HEIGHT);
         stage = new Stage(viewport);
+
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(stage);
 
         dialogHolderGroup = new Group();
-        enemyDialogHolderGroup = new Group();
-
 
         Gdx.input.setInputProcessor(stage);
     }
@@ -56,32 +50,52 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-       viewport.apply(true);
+        stage.getViewport().apply(true);
 
-       enemyActor = new EnemyActor(gameManager);
-       enemyActor.setPosition(Constants.V_WIDTH*.6f,200);
-       enemyActor.setScale(0.75f,0.75f);
+        backgroundImage = new Image(new TextureRegion(new Texture(Gdx.files.internal("sprite/bg2.png"))));
+        backgroundImage.setScale(1.25f);
+        backgroundImage.setTouchable(Touchable.disabled);
 
-        stage.addActor(enemyActor);
-        stage.addActor(enemyDialogHolderGroup);
+        characterImage = new Image((new TextureRegion(new Texture(Gdx.files.internal("sprite/char1.png")))));
+        characterImage.setScale(1.5f);
+        characterImage.setPosition(50,-50);
+        characterImage.setTouchable(Touchable.disabled);
+
+        monsterActor = new MonsterActor(gameManager);
+        monsterActor.setPosition(Constants.V_WIDTH*.65f,200);
+        monsterActor.setScale(0.7f,0.8f);
+
+        stage.addActor(monsterActor);
+        stage.addActor(backgroundImage);
+        stage.addActor(characterImage);
         stage.addActor(dialogHolderGroup);
 
         gameManager.playCinematic();
         gameManager.initGame();
+
+        // Debug test
+        TextButton textButton = new TextButton("Clik ON ME", gameManager.getAssetManager().getSkin());
+        textButton.addListener(new InputListener(){
+            @Override
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                monsterActor.updateMood();
+                return false;
+            }
+        });
+        stage.addActor(textButton);
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
         Gdx.gl.glClearColor( 1,1,1,1 );
-
         stage.draw();
         stage.act();
     }
 
     @Override
     public void resize(int width, int height) {
-        viewport.update(width, height);
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -112,11 +126,7 @@ public class GameScreen implements Screen {
         return dialogHolderGroup;
     }
 
-    public Group getEnemyDialogHolderGroup() {
-        return enemyDialogHolderGroup;
-    }
-
-    public EnemyActor getEnemyActor() {
-        return enemyActor;
+    public MonsterActor getMonsterActor() {
+        return monsterActor;
     }
 }

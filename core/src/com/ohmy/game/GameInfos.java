@@ -9,8 +9,8 @@ public class GameInfos {
     private int currentState;
     private ArrayList<DialogEntity> availablePlayerAttackList;
     private ArrayList<DialogEntity> availablePlayerRespondList;
-    private ArrayList<DialogEntity> availableEnemyAttackList;
-    private ArrayList<DialogEntity> availableEnemyRespondList;
+    private ArrayList<DialogEntity> availableMonsterAttackList;
+    private ArrayList<DialogEntity> availableMonsterRespondList;
     private GameManager gameManager;
 
     public GameInfos(GameManager gameManager) {
@@ -18,8 +18,8 @@ public class GameInfos {
         currentState = 0;
         availablePlayerAttackList = new ArrayList<DialogEntity>();
         availablePlayerRespondList = new ArrayList<DialogEntity>();
-        availableEnemyAttackList = new ArrayList<DialogEntity>();
-        availableEnemyRespondList = new ArrayList<DialogEntity>();
+        availableMonsterAttackList = new ArrayList<DialogEntity>();
+        availableMonsterRespondList = new ArrayList<DialogEntity>();
 
         resetDialogList();
     }
@@ -60,19 +60,19 @@ public class GameInfos {
         this.availablePlayerRespondList = availablePlayerRespondList;
     }
 
-    public ArrayList<DialogEntity> getAvailableEnemyAttackList() {
-        return availableEnemyAttackList;
+    public ArrayList<DialogEntity> getAvailableMonsterAttackList() {
+        return availableMonsterAttackList;
     }
 
-    public void setAvailableEnemyAttackList(ArrayList<DialogEntity> availableEnemyAttackList) {
-        this.availableEnemyAttackList = availableEnemyAttackList;
+    public void setAvailableMonsterAttackList(ArrayList<DialogEntity> availableMonsterAttackList) {
+        this.availableMonsterAttackList = availableMonsterAttackList;
     }
 
-    public ArrayList<DialogEntity> getAvailableEnemyRespondList() {
-        return availableEnemyRespondList;
+    public ArrayList<DialogEntity> getAvailableMonsterRespondList() {
+        return availableMonsterRespondList;
     }
 
-    public void setAvailableEnemyRespondList(ArrayList<DialogEntity> availableEnemyRespondList) {
-        this.availableEnemyRespondList = availableEnemyRespondList;
+    public void setAvailableMonsterRespondList(ArrayList<DialogEntity> availableMonsterRespondList) {
+        this.availableMonsterRespondList = availableMonsterRespondList;
     }
 }

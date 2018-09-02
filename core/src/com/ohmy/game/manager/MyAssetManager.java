@@ -7,12 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Json;
 import com.ohmy.game.DialogEntity;
+import com.ohmy.game.DialogEntityList;
 import com.ohmy.game.MyOhMyGame;
-import com.ohmy.game.actor.EnemyEntity;
+import com.ohmy.game.actor.MonsterDTO;
 
 import java.util.ArrayList;
-
-import javax.xml.soap.Text;
 
 public class MyAssetManager implements Disposable {
 
@@ -23,15 +22,14 @@ public class MyAssetManager implements Disposable {
 
     private ArrayList<DialogEntity> playerAttackList;
     private ArrayList<DialogEntity> playerRespondList;
-    private ArrayList<DialogEntity> monsterAttackList;
-    private ArrayList<DialogEntity> monsterRespondList;
-    private ArrayList<EnemyEntity> monsterList;
+    private ArrayList<DialogEntityList> dialogEntityList;
+    private ArrayList<MonsterDTO> monsterList;
 
     public MyAssetManager(MyOhMyGame game) {
-         this.game = game;
-         assetManager = new AssetManager();
-         skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
-         currentStatus=0;
+        this.game = game;
+        assetManager = new AssetManager();
+        skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
+        currentStatus=0;
     }
 
     public void loadTexture(){
@@ -56,11 +54,11 @@ public class MyAssetManager implements Disposable {
         playerRespondList = new ArrayList<DialogEntity>();
         playerRespondList = json.fromJson(ArrayList.class, DialogEntity.class, Gdx.files.internal("json/player_respond.json"));
 
-        monsterAttackList = new ArrayList<DialogEntity>();
-        monsterAttackList = json.fromJson(ArrayList.class, DialogEntity.class, Gdx.files.internal("json/monster_attack.json"));
+        dialogEntityList = new ArrayList<DialogEntityList>();
+        dialogEntityList = json.fromJson(ArrayList.class, DialogEntityList.class, Gdx.files.internal("json/monsterAtk1.json"));
 
-        monsterList = new ArrayList<EnemyEntity>();
-        monsterList = json.fromJson(ArrayList.class, EnemyEntity.class, Gdx.files.internal("json/monster.json"));
+        monsterList = new ArrayList<MonsterDTO>();
+        monsterList = json.fromJson(ArrayList.class, MonsterDTO.class, Gdx.files.internal("json/monster.json"));
     }
 
     public void loadSound(){
@@ -95,10 +93,6 @@ public class MyAssetManager implements Disposable {
         return playerRespondList;
     }
 
-    public ArrayList<DialogEntity> getMonsterAttackList() {
-        return monsterAttackList;
-    }
-
     public int getCurrentStatus() {
         return currentStatus;
     }
@@ -107,7 +101,11 @@ public class MyAssetManager implements Disposable {
         this.currentStatus = currentStatus;
     }
 
-    public ArrayList<EnemyEntity> getMonsterList() {
+    public ArrayList<MonsterDTO> getMonsterList() {
         return monsterList;
+    }
+
+    public ArrayList<DialogEntityList> getDialogEntityList() {
+        return dialogEntityList;
     }
 }

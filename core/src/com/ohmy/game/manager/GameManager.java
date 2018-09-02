@@ -2,6 +2,7 @@ package com.ohmy.game.manager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -15,7 +16,8 @@ import com.ohmy.game.Constants;
 import com.ohmy.game.DialogEntity;
 import com.ohmy.game.GameInfos;
 import com.ohmy.game.actor.DialogGroup;
-import com.ohmy.game.actor.EnemyEntity;
+import com.ohmy.game.actor.MonsterDTO;
+import com.ohmy.game.event.ScriptedEvent;
 import com.ohmy.game.screen.GameScreen;
 import com.ohmy.game.MyOhMyGame;
 import com.ohmy.game.PlayerInfo;
@@ -32,10 +34,10 @@ public class GameManager {
     private Hud hud;
     private GameInfos gameInfos;
     private MyAssetManager assetManager;
+    private ArrayList<ScriptedEvent> scriptedEvents;//parcours et execute
 
-
-    private DialogEntity currentPlayerDialogEntity;
-    private DialogEntity currentEnemyDialogEntity;
+    private DialogEntity playerDialogEntity;
+    private DialogEntity monsterDialogEntity;
 
     private TextButton withdrawHandTB;
 
@@ -58,7 +60,7 @@ public class GameManager {
         gameInfos = new GameInfos(this);
 
         // INIT THE SCENE
-        loadEnemyActor(0);
+        loadMonsterActor(0);
 
         // BEGIN THE GAME
         executeTurn();
@@ -71,14 +73,11 @@ public class GameManager {
     public void executeTurn(){
         switch (gameInfos.getCurrentState()) {
             case Constants.STATE_PLAYER_ATK :
-                resetEnemyActorDialog();
                 hidePlayerDialogGroup();
                 resetPlayerDialogGroup();
-                showPlayerDialogGroup();
                 break;
             case Constants.STATE_ENEMY_RESPOND:
-                resetEnemyActorDialog();
-                showEnemyDialogGroup();
+                generateMonsterRespons();
                 break;
             case Constants.STATE_PLAYER_RESPOND:
                 break;
@@ -129,18 +128,6 @@ public class GameManager {
 
     private void withdrawPlayerHand(){
         hidePlayerDialogGroup();
-        showPlayerDialogGroup();
-    }
-
-    public void showPlayerDialogGroup(){
-        if (gameScreen.getDialogHolderGroup().getY()<0) {
-            gameScreen.getDialogHolderGroup().addAction(Actions.sequence(Actions.moveBy(0f, 500f, 0.5f), Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    gameScreen.getDialogHolderGroup().setTouchable(Touchable.enabled);
-                }
-            })));
-        }
     }
 
     public void hidePlayerDialogGroup(){
@@ -150,26 +137,20 @@ public class GameManager {
                 gameScreen.getDialogHolderGroup().setTouchable(Touchable.disabled);}})));
     }
 
-    public void resetEnemyActorDialog(){
-        int index=0;
-        index = (int)(Math.random() * (assetManager.getMonsterAttackList().size()-1));
-        DialogEntity dialogEntity = assetManager.getMonsterAttackList().get(index);
-        gameScreen.getEnemyActor().setCurrentDialogEntity(dialogEntity);
-        gameScreen.getEnemyActor().speak();
+    public void generateMonsterRespons(){
+        gameScreen.getMonsterActor().resetAtkText();
+        gameScreen.getMonsterActor().switchText();
     }
 
-    public void showEnemyDialogGroup(){
-        gameScreen.getDialogHolderGroup().setVisible(true);
+    public void loadMonsterActor(int id){
+        MonsterDTO monsterEntity = assetManager.getMonsterList().get(id);
+        gameScreen.getMonsterActor().init(monsterEntity);
     }
 
-    public void loadEnemyActor(int id){
-        EnemyEntity enemyEntity = assetManager.getMonsterList().get(id);
-        gameScreen.getEnemyActor().init(enemyEntity);
-    }
+    public void validatePlayerChoice(final DialogEntity dialogEntity) {
+        Gdx.app.debug("GameManager", "validatePlayerChoice: "+dialogEntity.getId()+": "+dialogEntity.getText());
 
-    public void validatePlayerChoice(DialogEntity dialogEntity) {
-        Gdx.app.debug("GameManager", "validatePlayerChoice: "+dialogEntity.getText());
-        currentPlayerDialogEntity = dialogEntity;
+        playerDialogEntity = dialogEntity;
         gameScreen.getDialogHolderGroup().setTouchable(Touchable.disabled);
         gameScreen.getDialogHolderGroup().addAction(Actions.sequence(Actions.delay(1f),Actions.moveBy(0f,-500f,1f), Actions.run(new Runnable() {
             @Override
@@ -177,19 +158,23 @@ public class GameManager {
                 resolveAction();}})));
     }
 
-    public void validateEnemyChoice(DialogEntity dialogEntity) {
-        Gdx.app.debug("GameManager", "validateEnemyChoice: "+dialogEntity.getText());
-        // IA
-        currentEnemyDialogEntity = gameInfos.getAvailableEnemyAttackList().get(2);
+    public void validateMonsterChoice(DialogEntity dialogEntity) {
+        Gdx.app.debug("GameManager", "validateMonsterChoice: "+dialogEntity.getText());
+        monsterDialogEntity = gameScreen.getMonsterActor().getCurrentDialogEntity();
         resolveAction();
     }
 
+    /**
+     * Resout l'action du tour en cours et execute le suivant
+     */
     public void resolveAction() {
-        if (null!=currentPlayerDialogEntity && null!=currentEnemyDialogEntity){
+        int result=0;
+        if (null!=playerDialogEntity && null!=monsterDialogEntity){
+            result = dialogManager.resolveDialogDuel(monsterDialogEntity,playerDialogEntity);
             gameInfos.setCurrentState(Constants.STATE_END_TURN);
-        } else if (null==currentEnemyDialogEntity) {
+        } else if (null==monsterDialogEntity) {
             gameInfos.setCurrentState(Constants.STATE_ENEMY_RESPOND);
-        } else if (null==currentPlayerDialogEntity) {
+        } else if (null==playerDialogEntity) {
             gameInfos.setCurrentState(Constants.STATE_PLAYER_RESPOND);
         }
         executeTurn();

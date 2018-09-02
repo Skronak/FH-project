@@ -10,16 +10,18 @@ import java.util.List;
  * to the actual enemy
  *
  */
-public class EnemyEntity {
+public class MonsterDTO {
     private int id;
     private String name;
     private List<String> idleFrames;
     private List<String> angerFrames;
     private String dialogImage;
+    private int dialogTxtId;
     private int hp;
     private int calmRate;
     private int angerRate;
     private int pleasedRate;
+    private int angryTouch; // Nb touch before getting angry, to implement
 
     public int getId() {
         return id;
@@ -91,5 +93,21 @@ public class EnemyEntity {
 
     public void setPleasedRate(int pleasedRate) {
         this.pleasedRate = pleasedRate;
+    }
+
+    public int getAngryTouch() {
+        return angryTouch;
+    }
+
+    public void setAngryTouch(int angryTouch) {
+        this.angryTouch = angryTouch;
+    }
+
+    public int getDialogTxtId() {
+        return dialogTxtId;
+    }
+
+    public void setDialogTxtId(int dialogTxtId) {
+        this.dialogTxtId = dialogTxtId;
     }
 }
