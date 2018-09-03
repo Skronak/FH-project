@@ -24,6 +24,7 @@ import com.ohmy.game.PlayerInfo;
 import com.ohmy.game.screen.Hud;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameManager {
     private MyOhMyGame game;
@@ -45,7 +46,8 @@ public class GameManager {
         assetManager = new MyAssetManager(game);
         this.game = game;
         hud = new Hud(this);
-        dialogManager = new DialogManager(this);
+        dialogManager = new DialogManager(assetManager);
+
         playerInfo = new PlayerInfo();
         gameScreen = new GameScreen(this);
         turnManager = new TurnManager();
@@ -61,6 +63,7 @@ public class GameManager {
 
         // INIT THE SCENE
         loadMonsterActor(0);
+        initPlayerHand();
 
         // BEGIN THE GAME
         executeTurn();
@@ -86,6 +89,12 @@ public class GameManager {
         }
     }
 
+    /**
+     * Genere une ligne de dialog pour le joueur
+     * @param dialogEntity
+     * @param positiony
+     * @return
+     */
     private Group generateDialogOption(DialogEntity dialogEntity, int positiony) {
         Image image = new Image(assetManager.get("sprite/green.jpg",Texture.class));
         DialogGroup dialogGroup = new DialogGroup(image,assetManager.getSkin(), dialogEntity, this, positiony);
@@ -95,6 +104,7 @@ public class GameManager {
     /**
      * Reset le dialogHolderGroup et le repeuple avec
      * x DialogGroup aleatoire en fonction du currentState
+     * TODO a revoir
      */
     public void resetPlayerDialogGroup(){
         gameScreen.getDialogHolderGroup().clear();
@@ -108,7 +118,7 @@ public class GameManager {
             }
         } else if (gameInfos.getCurrentState()==Constants.STATE_PLAYER_RESPOND) {
             for (int i = 0; i< Constants.PLAYER_NB_DIALOG_DEF; i++) {
-                index = (int)(Math.random() * (assetManager.getPlayerRespondList().size()-1));
+                index = (int)(Math.random() * (assetManager.getPlayerDefendList().size()-1));
                 DialogEntity dialogEntity = assetManager.getPlayerAttackList().get(index);
                 gameScreen.getDialogHolderGroup().addActor(generateDialogOption(dialogEntity,i+(Constants.SCREEN_PLAYER_DIALOG_PADDING*(1+i))));
             }
@@ -118,8 +128,8 @@ public class GameManager {
     private void initTextButton(){
         InputListener buttonListener = new ClickListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                withdrawPlayerHand();
-                return false;
+            hidePlayerDialogGroup();
+            return false;
             }
         };
         withdrawHandTB.addListener(buttonListener);
@@ -137,6 +147,23 @@ public class GameManager {
                 gameScreen.getDialogHolderGroup().setTouchable(Touchable.disabled);}})));
     }
 
+    public void switchPlayerDialogGroup(){
+        gameScreen.getDialogHolderGroup().debug();
+        if (gameScreen.getDialogHolderGroup().isTouchable()) {
+            gameScreen.getDialogHolderGroup().addAction(Actions.sequence(Actions.parallel(Actions.fadeOut(0.5f), Actions.moveBy(0f,-500f,0.5f)), Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    gameScreen.getDialogHolderGroup().setTouchable(Touchable.disabled);}})));
+        } else {
+            gameScreen.getDialogHolderGroup().addAction(Actions.sequence(Actions.parallel(Actions.fadeIn(0.5f),Actions.moveTo(0f, 0, 0.5f)),
+                    Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    gameScreen.getDialogHolderGroup().setTouchable(Touchable.enabled);
+                }})));
+        }
+    }
+
     public void generateMonsterRespons(){
         gameScreen.getMonsterActor().resetAtkText();
         gameScreen.getMonsterActor().switchText();
@@ -145,6 +172,12 @@ public class GameManager {
     public void loadMonsterActor(int id){
         MonsterDTO monsterEntity = assetManager.getMonsterList().get(id);
         gameScreen.getMonsterActor().init(monsterEntity);
+    }
+
+    public void initPlayerHand(){
+        List<DialogEntity> dialogEntities = dialogManager.initAtkDialogHand();
+        gameInfos.setAvailableMonsterDefendList(dialogEntities);
+
     }
 
     public void validatePlayerChoice(final DialogEntity dialogEntity) {

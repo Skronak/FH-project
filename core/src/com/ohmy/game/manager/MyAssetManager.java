@@ -21,7 +21,7 @@ public class MyAssetManager implements Disposable {
     private int currentStatus;
 
     private ArrayList<DialogEntity> playerAttackList;
-    private ArrayList<DialogEntity> playerRespondList;
+    private ArrayList<DialogEntity> playerDefendList;
     private ArrayList<DialogEntityList> dialogEntityList;
     private ArrayList<MonsterDTO> monsterList;
 
@@ -51,8 +51,8 @@ public class MyAssetManager implements Disposable {
         playerAttackList = new ArrayList<DialogEntity>();
         playerAttackList = json.fromJson(ArrayList.class, DialogEntity.class, Gdx.files.internal("json/player_attack.json"));
 
-        playerRespondList = new ArrayList<DialogEntity>();
-        playerRespondList = json.fromJson(ArrayList.class, DialogEntity.class, Gdx.files.internal("json/player_respond.json"));
+        playerDefendList = new ArrayList<DialogEntity>();
+        playerDefendList = json.fromJson(ArrayList.class, DialogEntity.class, Gdx.files.internal("json/player_respond.json"));
 
         dialogEntityList = new ArrayList<DialogEntityList>();
         dialogEntityList = json.fromJson(ArrayList.class, DialogEntityList.class, Gdx.files.internal("json/monsterAtk1.json"));
@@ -89,8 +89,8 @@ public class MyAssetManager implements Disposable {
         return playerAttackList;
     }
 
-    public ArrayList<DialogEntity> getPlayerRespondList() {
-        return playerRespondList;
+    public ArrayList<DialogEntity> getPlayerDefendList() {
+        return playerDefendList;
     }
 
     public int getCurrentStatus() {

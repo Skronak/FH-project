@@ -69,6 +69,7 @@ public class GameScreen implements Screen {
         stage.addActor(backgroundImage);
         stage.addActor(characterImage);
         stage.addActor(dialogHolderGroup);
+        stage.setDebugAll(true);
 
         gameManager.playCinematic();
         gameManager.initGame();
@@ -79,6 +80,7 @@ public class GameScreen implements Screen {
             @Override
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 monsterActor.updateMood();
+                gameManager.switchPlayerDialogGroup();
                 return false;
             }
         });
