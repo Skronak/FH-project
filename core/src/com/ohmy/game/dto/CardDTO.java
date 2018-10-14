@@ -1,14 +1,14 @@
-package com.ohmy.game;
+package com.ohmy.game.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class DialogEntity implements Serializable {
-    private int id;
-    private int counterId;
-    private ArrayList<String> text;
-    private int type;
-    private int val;
+public class CardDTO implements Serializable {
+    public int id;
+    public int counterId;
+    public ArrayList<String> text;
+    public int type;
+    public int val;
 
     public int getType() {
         return type;

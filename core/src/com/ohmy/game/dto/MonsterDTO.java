@@ -1,4 +1,4 @@
-package com.ohmy.game.actor;
+package com.ohmy.game.dto;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
@@ -6,9 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import java.util.List;
 
 /**
- * Actor renderer on screen corresponding
- * to the actual enemy
- *
+ * DTO class representing monster
+ * from json file
  */
 public class MonsterDTO {
     private int id;
@@ -22,6 +21,9 @@ public class MonsterDTO {
     private int angerRate;
     private int pleasedRate;
     private int angryTouch; // Nb touch before getting angry, to implement
+    private float posX,posY;
+    private int height;
+    private int width;
 
     public int getId() {
         return id;
@@ -109,5 +111,37 @@ public class MonsterDTO {
 
     public void setDialogTxtId(int dialogTxtId) {
         this.dialogTxtId = dialogTxtId;
+    }
+
+    public float getPosX() {
+        return posX;
+    }
+
+    public void setPosX(float posX) {
+        this.posX = posX;
+    }
+
+    public float getPosY() {
+        return posY;
+    }
+
+    public void setPosY(float posY) {
+        this.posY = posY;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
     }
 }

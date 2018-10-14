@@ -6,10 +6,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Json;
-import com.ohmy.game.DialogEntity;
-import com.ohmy.game.DialogEntityList;
+import com.ohmy.game.dto.CardDTO;
+import com.ohmy.game.CardDTOList;
 import com.ohmy.game.MyOhMyGame;
-import com.ohmy.game.actor.MonsterDTO;
+import com.ohmy.game.dto.MonsterDTO;
 
 import java.util.ArrayList;
 
@@ -20,9 +20,9 @@ public class MyAssetManager implements Disposable {
     private Skin skin;
     private int currentStatus;
 
-    private ArrayList<DialogEntity> playerAttackList;
-    private ArrayList<DialogEntity> playerDefendList;
-    private ArrayList<DialogEntityList> dialogEntityList;
+    private ArrayList<CardDTO> playerAttackList;
+    private ArrayList<CardDTO> playerDefendList;
+    private ArrayList<CardDTOList> cardDTOList;
     private ArrayList<MonsterDTO> monsterList;
 
     public MyAssetManager(MyOhMyGame game) {
@@ -44,18 +44,23 @@ public class MyAssetManager implements Disposable {
         assetManager.load("sprite/monster/monster3.png", Texture.class);
         assetManager.load("sprite/monster/monster1_anger.png", Texture.class);
         assetManager.load("sprite/arrowIcon.png", Texture.class);
+        assetManager.load("sprite/type1.png", Texture.class);
+        assetManager.load("sprite/type2.png", Texture.class);
+        assetManager.load("sprite/type3.png", Texture.class);
+        assetManager.load("sprite/type4.png", Texture.class);
+        assetManager.load("sprite/type5.png", Texture.class);
     }
 
     public void loadJSONFile(){
         Json json = new Json();
-        playerAttackList = new ArrayList<DialogEntity>();
-        playerAttackList = json.fromJson(ArrayList.class, DialogEntity.class, Gdx.files.internal("json/player_attack.json"));
+        playerAttackList = new ArrayList<CardDTO>();
+        playerAttackList = json.fromJson(ArrayList.class, CardDTO.class, Gdx.files.internal("json/player_attack.json"));
 
-        playerDefendList = new ArrayList<DialogEntity>();
-        playerDefendList = json.fromJson(ArrayList.class, DialogEntity.class, Gdx.files.internal("json/player_respond.json"));
+        playerDefendList = new ArrayList<CardDTO>();
+        playerDefendList = json.fromJson(ArrayList.class, CardDTO.class, Gdx.files.internal("json/player_respond.json"));
 
-        dialogEntityList = new ArrayList<DialogEntityList>();
-        dialogEntityList = json.fromJson(ArrayList.class, DialogEntityList.class, Gdx.files.internal("json/monsterAtk1.json"));
+        cardDTOList = new ArrayList<CardDTOList>();
+        cardDTOList = json.fromJson(ArrayList.class, CardDTOList.class, Gdx.files.internal("json/monsterAtk1.json"));
 
         monsterList = new ArrayList<MonsterDTO>();
         monsterList = json.fromJson(ArrayList.class, MonsterDTO.class, Gdx.files.internal("json/monster.json"));
@@ -85,11 +90,11 @@ public class MyAssetManager implements Disposable {
         assetManager.dispose();
     }
 
-    public ArrayList<DialogEntity> getPlayerAttackList() {
+    public ArrayList<CardDTO> getPlayerAttackList() {
         return playerAttackList;
     }
 
-    public ArrayList<DialogEntity> getPlayerDefendList() {
+    public ArrayList<CardDTO> getPlayerDefendList() {
         return playerDefendList;
     }
 
@@ -105,7 +110,7 @@ public class MyAssetManager implements Disposable {
         return monsterList;
     }
 
-    public ArrayList<DialogEntityList> getDialogEntityList() {
-        return dialogEntityList;
+    public ArrayList<CardDTOList> getCardDTOList() {
+        return cardDTOList;
     }
 }

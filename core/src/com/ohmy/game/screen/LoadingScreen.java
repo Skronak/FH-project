@@ -16,6 +16,8 @@ import com.ohmy.game.Constants;
 import com.ohmy.game.MyOhMyGame;
 import com.ohmy.game.manager.MyAssetManager;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
+
 /**
  * Created by Skronak on 15/07/2017.
  */
@@ -33,8 +35,8 @@ public class LoadingScreen implements Screen {
     public LoadingScreen(MyOhMyGame game, boolean devMode){
         this.game = game;
         this.myAssetManager = game.getGameManager().getAssetManager();
-        splashImage=new Image(new Texture(Gdx.files.internal("sprite/logo2.png")));
-        splashImage.setPosition(Gdx.graphics.getWidth()/2-splashImage.getWidth()/2,Gdx.graphics.getHeight()/2-splashImage.getHeight()/2);
+        splashImage=new Image(new Texture(Gdx.files.internal("sprite/logov1.png")));
+        splashImage.setPosition(Constants.V_WIDTH/2-splashImage.getWidth()/2,Constants.V_HEIGHT/2-splashImage.getHeight()/2);
         camera = new OrthographicCamera(Constants.V_WIDTH, Constants.V_HEIGHT);
         viewport = new StretchViewport(Constants.V_WIDTH, Constants.V_HEIGHT, camera);
         stage = new Stage(viewport);
@@ -56,7 +58,7 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0,0,0,1);
+        Gdx.gl.glClearColor(1f,1f,1,1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act();
         stage.draw();
@@ -84,6 +86,7 @@ public class LoadingScreen implements Screen {
                         myAssetManager.loadTexture();
                         break;
                 }
+
             } else {
                 Gdx.app.log("SplashScreen","Asset loaded !");
                 if (devMode){

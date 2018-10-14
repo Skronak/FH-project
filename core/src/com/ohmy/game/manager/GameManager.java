@@ -2,21 +2,19 @@ package com.ohmy.game.manager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ohmy.game.Constants;
-import com.ohmy.game.DialogEntity;
+import com.ohmy.game.dto.CardDTO;
 import com.ohmy.game.GameInfos;
 import com.ohmy.game.actor.DialogGroup;
-import com.ohmy.game.actor.MonsterDTO;
+import com.ohmy.game.dto.MonsterDTO;
 import com.ohmy.game.event.ScriptedEvent;
 import com.ohmy.game.screen.GameScreen;
 import com.ohmy.game.MyOhMyGame;
@@ -35,11 +33,11 @@ public class GameManager {
     private Hud hud;
     private GameInfos gameInfos;
     private MyAssetManager assetManager;
+    private CardManager cardManager;
     private ArrayList<ScriptedEvent> scriptedEvents;//parcours et execute
 
-    private DialogEntity playerDialogEntity;
-    private DialogEntity monsterDialogEntity;
-
+    private CardDTO playerCardDTO;
+    private CardDTO monsterCardDTO;
     private TextButton withdrawHandTB;
 
     public GameManager (MyOhMyGame game) {
@@ -47,6 +45,7 @@ public class GameManager {
         this.game = game;
         hud = new Hud(this);
         dialogManager = new DialogManager(assetManager);
+        cardManager = new CardManager(this);
 
         playerInfo = new PlayerInfo();
         gameScreen = new GameScreen(this);
@@ -58,11 +57,12 @@ public class GameManager {
 
     }
 
+
     public void initGame() {
         gameInfos = new GameInfos(this);
 
         // INIT THE SCENE
-        loadMonsterActor(0);
+        initMonsterActor(0);
         initPlayerHand();
 
         // BEGIN THE GAME
@@ -78,6 +78,7 @@ public class GameManager {
             case Constants.STATE_PLAYER_ATK :
                 hidePlayerDialogGroup();
                 resetPlayerDialogGroup();
+//                showPlayerDialogGroup();
                 break;
             case Constants.STATE_ENEMY_RESPOND:
                 generateMonsterRespons();
@@ -89,15 +90,21 @@ public class GameManager {
         }
     }
 
+    private void withdrawCard(DialogGroup dialogGroup){
+        cardManager.withdrawCard(dialogGroup);
+        cardManager.drawCard();
+    }
+
     /**
      * Genere une ligne de dialog pour le joueur
-     * @param dialogEntity
+     * @param cardDTO
      * @param positiony
      * @return
      */
-    private Group generateDialogOption(DialogEntity dialogEntity, int positiony) {
+    private Group generateDialogOption(CardDTO cardDTO, int positiony) {
         Image image = new Image(assetManager.get("sprite/green.jpg",Texture.class));
-        DialogGroup dialogGroup = new DialogGroup(image,assetManager.getSkin(), dialogEntity, this, positiony);
+        Image typeImage = new Image(assetManager.get("sprite/type"+ cardDTO.getType()+".png",Texture.class));
+        DialogGroup dialogGroup = new DialogGroup(image,typeImage,assetManager.getSkin(), cardDTO, this, positiony);
         return dialogGroup;
     }
 
@@ -108,19 +115,18 @@ public class GameManager {
      */
     public void resetPlayerDialogGroup(){
         gameScreen.getDialogHolderGroup().clear();
-
         int index=0;
         if(gameInfos.getCurrentState()==Constants.STATE_PLAYER_ATK) {
             for (int i = 0; i< Constants.PLAYER_NB_DIALOG_ATK; i++) {
                 index = (int)(Math.random() * (assetManager.getPlayerAttackList().size()-1));
-                DialogEntity dialogEntity = assetManager.getPlayerAttackList().get(index);
-                gameScreen.getDialogHolderGroup().addActor(generateDialogOption(dialogEntity,i+(Constants.SCREEN_PLAYER_DIALOG_PADDING*(1+i))));
+                CardDTO cardDTO = assetManager.getPlayerAttackList().get(index);
+                gameScreen.getDialogHolderGroup().addActor(generateDialogOption(cardDTO,i+(Constants.SCREEN_PLAYER_DIALOG_PADDING*(1+i))));
             }
         } else if (gameInfos.getCurrentState()==Constants.STATE_PLAYER_RESPOND) {
             for (int i = 0; i< Constants.PLAYER_NB_DIALOG_DEF; i++) {
                 index = (int)(Math.random() * (assetManager.getPlayerDefendList().size()-1));
-                DialogEntity dialogEntity = assetManager.getPlayerAttackList().get(index);
-                gameScreen.getDialogHolderGroup().addActor(generateDialogOption(dialogEntity,i+(Constants.SCREEN_PLAYER_DIALOG_PADDING*(1+i))));
+                CardDTO cardDTO = assetManager.getPlayerAttackList().get(index);
+                gameScreen.getDialogHolderGroup().addActor(generateDialogOption(cardDTO,i+(Constants.SCREEN_PLAYER_DIALOG_PADDING*(1+i))));
             }
         }
     }
@@ -128,8 +134,8 @@ public class GameManager {
     private void initTextButton(){
         InputListener buttonListener = new ClickListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-            hidePlayerDialogGroup();
-            return false;
+                hidePlayerDialogGroup();
+                return false;
             }
         };
         withdrawHandTB.addListener(buttonListener);
@@ -140,6 +146,16 @@ public class GameManager {
         hidePlayerDialogGroup();
     }
 
+    public void showPlayerDialogGroup(){
+        gameScreen.getDialogHolderGroup().setPosition(gameScreen.getDialogHolderGroup().getX(),-500f);
+        gameScreen.getDialogHolderGroup().addAction(Actions.sequence(Actions.moveBy(0f, 500f, 0.5f), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                gameScreen.getDialogHolderGroup().setTouchable(Touchable.enabled);
+            }
+        })));
+    }
+
     public void hidePlayerDialogGroup(){
         gameScreen.getDialogHolderGroup().addAction(Actions.sequence(Actions.moveBy(0f,-500f,0.5f),  Actions.run(new Runnable() {
             @Override
@@ -148,42 +164,43 @@ public class GameManager {
     }
 
     public void switchPlayerDialogGroup(){
-        gameScreen.getDialogHolderGroup().debug();
+        gameScreen.getDialogHolderGroup().setVisible(true);
+
         if (gameScreen.getDialogHolderGroup().isTouchable()) {
-            gameScreen.getDialogHolderGroup().addAction(Actions.sequence(Actions.parallel(Actions.fadeOut(0.5f), Actions.moveBy(0f,-500f,0.5f)), Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    gameScreen.getDialogHolderGroup().setTouchable(Touchable.disabled);}})));
+            hidePlayerDialogGroup();
         } else {
-            gameScreen.getDialogHolderGroup().addAction(Actions.sequence(Actions.parallel(Actions.fadeIn(0.5f),Actions.moveTo(0f, 0, 0.5f)),
-                    Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    gameScreen.getDialogHolderGroup().setTouchable(Touchable.enabled);
-                }})));
+            showPlayerDialogGroup();
         }
     }
+
 
     public void generateMonsterRespons(){
         gameScreen.getMonsterActor().resetAtkText();
         gameScreen.getMonsterActor().switchText();
     }
 
-    public void loadMonsterActor(int id){
+    /**
+     * Retrieve monsterActor and initialize
+     * its on screen representation
+     * @param id
+     */
+    public void initMonsterActor(int id){
         MonsterDTO monsterEntity = assetManager.getMonsterList().get(id);
         gameScreen.getMonsterActor().init(monsterEntity);
+        gameInfos.setEnemyHP(monsterEntity.getHp());
+        gameScreen.getHud().updateHpLabel();
     }
 
     public void initPlayerHand(){
-        List<DialogEntity> dialogEntities = dialogManager.initAtkDialogHand();
+        List<CardDTO> dialogEntities = dialogManager.initAtkDialogHand();
         gameInfos.setAvailableMonsterDefendList(dialogEntities);
 
     }
 
-    public void validatePlayerChoice(final DialogEntity dialogEntity) {
-        Gdx.app.debug("GameManager", "validatePlayerChoice: "+dialogEntity.getId()+": "+dialogEntity.getText());
+    public void validatePlayerChoice(final CardDTO cardDTO) {
+        Gdx.app.debug("GameManager", "validatePlayerChoice: "+ cardDTO.getId()+": "+ cardDTO.getText());
 
-        playerDialogEntity = dialogEntity;
+        playerCardDTO = cardDTO;
         gameScreen.getDialogHolderGroup().setTouchable(Touchable.disabled);
         gameScreen.getDialogHolderGroup().addAction(Actions.sequence(Actions.delay(1f),Actions.moveBy(0f,-500f,1f), Actions.run(new Runnable() {
             @Override
@@ -191,9 +208,17 @@ public class GameManager {
                 resolveAction();}})));
     }
 
-    public void validateMonsterChoice(DialogEntity dialogEntity) {
-        Gdx.app.debug("GameManager", "validateMonsterChoice: "+dialogEntity.getText());
-        monsterDialogEntity = gameScreen.getMonsterActor().getCurrentDialogEntity();
+    public void swipeRight(CardDTO cardDTO){
+        Gdx.app.log("e","right");
+    }
+
+    public void swipeLeft(CardDTO cardDTO){
+
+    }
+
+    public void validateMonsterChoice(CardDTO cardDTO) {
+        Gdx.app.debug("GameManager", "validateMonsterChoice: "+ cardDTO.getText());
+        monsterCardDTO = gameScreen.getMonsterActor().getCurrentCardDTO();
         resolveAction();
     }
 
@@ -202,12 +227,12 @@ public class GameManager {
      */
     public void resolveAction() {
         int result=0;
-        if (null!=playerDialogEntity && null!=monsterDialogEntity){
-            result = dialogManager.resolveDialogDuel(monsterDialogEntity,playerDialogEntity);
+        if (null!= playerCardDTO && null!= monsterCardDTO){
+            result = dialogManager.resolveDialogDuel(monsterCardDTO, playerCardDTO);
             gameInfos.setCurrentState(Constants.STATE_END_TURN);
-        } else if (null==monsterDialogEntity) {
+        } else if (null== monsterCardDTO) {
             gameInfos.setCurrentState(Constants.STATE_ENEMY_RESPOND);
-        } else if (null==playerDialogEntity) {
+        } else if (null== playerCardDTO) {
             gameInfos.setCurrentState(Constants.STATE_PLAYER_RESPOND);
         }
         executeTurn();
@@ -235,5 +260,9 @@ public class GameManager {
 
     public MyAssetManager getAssetManager() {
         return assetManager;
+    }
+
+    public GameInfos getGameInfos() {
+        return gameInfos;
     }
 }

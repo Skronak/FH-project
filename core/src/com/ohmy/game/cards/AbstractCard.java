@@ -1,7 +1,8 @@
-package com.ohmy.game.actor;
+package com.ohmy.game.cards;
 
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ohmy.game.Constants;
@@ -10,17 +11,24 @@ import com.ohmy.game.input.CustomDragListener;
 import com.ohmy.game.manager.GameManager;
 
 /**
- * Classe container for player dialog options
+ * Defini la representation 2d d'une carte
+ * son fils defini la logique
  */
-public class DialogGroup extends Group {
+public abstract class AbstractCard extends Group {
     private Image image;
     private Image typeImage;
     private Label text;
     private GameManager gameManager;
     private boolean withdrawed;
 
-    public DialogGroup (Image image, Image typeImage, Skin skin, CardDTO cardDTO, GameManager gameManager, int positiony) {
+    private int value;
+    private int type;
+
+    public void initialize(Image image, Image typeImage, ImageButton imgButton, Skin skin, CardDTO cardDTO, GameManager gameManager, int positiony){
         Image fontImg = image;
+        ImageButton imageButton = imgButton;
+        imageButton.setPosition(fontImg.getWidth()-imageButton.getWidth(), 0);
+        imageButton.setHeight(fontImg.getHeight());
         text = new Label(cardDTO.getText().get(0), skin);
         text.setWrap(true);
         text.setSize(image.getWidth(),image.getHeight());
@@ -29,6 +37,7 @@ public class DialogGroup extends Group {
         this.addActor(fontImg);
         this.addActor(text);
         this.addActor(typeImage);
+        this.addActor(imageButton);
 
         this.setPosition(Constants.V_WIDTH/2-image.getWidth()/2, positiony);
         this.addListener(new CustomDragListener(this, gameManager, cardDTO));

@@ -1,26 +1,35 @@
 package com.ohmy.game;
 
+import com.ohmy.game.cards.AbstractCard;
+import com.ohmy.game.dto.CardDTO;
 import com.ohmy.game.manager.GameManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe de jeu sauvegardant les informations de la partie en cours
+ */
 public class GameInfos {
     // Current game data
     private int currentState;
-    private List<DialogEntity> availablePlayerAttackList;
-    private List<DialogEntity> availablePlayerDefendList;
-    private List<DialogEntity> availableMonsterAttackList;
-    private List<DialogEntity> availableMonsterDefendList;
+    private List<CardDTO> availablePlayerAttackList;
+    private List<CardDTO> availablePlayerDefendList;
+    private List<CardDTO> availableMonsterAttackList;
+    private List<CardDTO> availableMonsterDefendList;
     private GameManager gameManager;
+    private List<AbstractCard> playerHand;
+    private List<AbstractCard> enemyHand;
+    private int enemyHP;
+    private int playerHP;
 
     public GameInfos(GameManager gameManager) {
         this.gameManager = gameManager;
         currentState = 0;
-        availablePlayerAttackList = new ArrayList<DialogEntity>();
-        availablePlayerDefendList = new ArrayList<DialogEntity>();
-        availableMonsterAttackList = new ArrayList<DialogEntity>();
-        availableMonsterDefendList = new ArrayList<DialogEntity>();
+        availablePlayerAttackList = new ArrayList<CardDTO>();
+        availablePlayerDefendList = new ArrayList<CardDTO>();
+        availableMonsterAttackList = new ArrayList<CardDTO>();
+        availableMonsterDefendList = new ArrayList<CardDTO>();
 
         resetDialogList();
     }
@@ -45,36 +54,51 @@ public class GameInfos {
         this.currentState = currentState;
     }
 
-    public List<DialogEntity> getAvailablePlayerAttackList() {
+    public List<CardDTO> getAvailablePlayerAttackList() {
         return availablePlayerAttackList;
     }
 
-    public void setAvailablePlayerAttackList(List<DialogEntity> availablePlayerAttackList) {
+    public void setAvailablePlayerAttackList(List<CardDTO> availablePlayerAttackList) {
         this.availablePlayerAttackList = availablePlayerAttackList;
     }
 
-    public List<DialogEntity> getAvailablePlayerDefendList() {
+    public List<CardDTO> getAvailablePlayerDefendList() {
         return availablePlayerDefendList;
     }
 
-    public void setAvailablePlayerDefendList(List<DialogEntity> availablePlayerDefendList) {
+    public void setAvailablePlayerDefendList(List<CardDTO> availablePlayerDefendList) {
         this.availablePlayerDefendList = availablePlayerDefendList;
     }
 
-    public List<DialogEntity> getAvailableMonsterDefendList() {
+    public List<CardDTO> getAvailableMonsterDefendList() {
         return availableMonsterDefendList;
     }
 
-    public void setAvailableMonsterDefendList(List<DialogEntity> availableMonsterDefendList) {
+    public void setAvailableMonsterDefendList(List<CardDTO> availableMonsterDefendList) {
         this.availableMonsterDefendList = availableMonsterDefendList;
     }
 
-    public List<DialogEntity> getAvailableMonsterAttackList() {
+    public List<CardDTO> getAvailableMonsterAttackList() {
         return availableMonsterAttackList;
     }
 
-    public void setAvailableMonsterAttackList(List<DialogEntity> availableMonsterAttackList) {
+    public void setAvailableMonsterAttackList(List<CardDTO> availableMonsterAttackList) {
         this.availableMonsterAttackList = availableMonsterAttackList;
     }
 
+    public int getEnemyHP() {
+        return enemyHP;
+    }
+
+    public void setEnemyHP(int enemyHP) {
+        this.enemyHP = enemyHP;
+    }
+
+    public int getPlayerHP() {
+        return playerHP;
+    }
+
+    public void setPlayerHP(int playerHP) {
+        this.playerHP = playerHP;
+    }
 }

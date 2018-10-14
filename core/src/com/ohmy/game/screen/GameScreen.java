@@ -16,7 +16,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.ohmy.game.Constants;
 import com.ohmy.game.actor.MonsterActor;
+import com.ohmy.game.cards.AttackCard;
 import com.ohmy.game.manager.GameManager;
+import com.ohmy.game.ui.PlayerHandMenu;
 
 /**
  * Created by Skronak on 20/11/2017.
@@ -26,11 +28,13 @@ public class GameScreen implements Screen {
 
     private Stage stage;
     private InputMultiplexer inputMultiplexer;
+    private PlayerHandMenu playerHandMenu;
     private GameManager gameManager;
     private Group dialogHolderGroup;
     private MonsterActor monsterActor;
     private Image backgroundImage;
     private Image characterImage;//TODO A remplacer par animatedActor
+    private Hud hud;
 
     public GameScreen(GameManager gameManager){
         this.gameManager = gameManager;
@@ -39,6 +43,8 @@ public class GameScreen implements Screen {
 
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(stage);
+
+        playerHandMenu = new PlayerHandMenu(gameManager);
 
         dialogHolderGroup = new Group();
 
@@ -52,6 +58,7 @@ public class GameScreen implements Screen {
     public void show() {
         stage.getViewport().apply(true);
 
+        hud = new Hud(gameManager);
         backgroundImage = new Image(new TextureRegion(new Texture(Gdx.files.internal("sprite/bg2.png"))));
         backgroundImage.setScale(1.25f);
         backgroundImage.setTouchable(Touchable.disabled);
@@ -62,17 +69,16 @@ public class GameScreen implements Screen {
         characterImage.setTouchable(Touchable.disabled);
 
         monsterActor = new MonsterActor(gameManager);
-        monsterActor.setPosition(Constants.V_WIDTH*.65f,200);
-        monsterActor.setScale(0.7f,0.8f);
 
         stage.addActor(monsterActor);
         stage.addActor(backgroundImage);
         stage.addActor(characterImage);
-        stage.addActor(dialogHolderGroup);
-        stage.setDebugAll(true);
+//        stage.addActor(dialogHolderGroup);
+        stage.addActor(playerHandMenu);
+        //stage.setDebugAll(true);
 
-        gameManager.playCinematic();
         gameManager.initGame();
+        gameManager.playCinematic();
 
         // Debug test
         TextButton textButton = new TextButton("Clik ON ME", gameManager.getAssetManager().getSkin());
@@ -93,6 +99,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor( 1,1,1,1 );
         stage.draw();
         stage.act();
+        hud.draw();
     }
 
     @Override
@@ -128,7 +135,15 @@ public class GameScreen implements Screen {
         return dialogHolderGroup;
     }
 
+    public PlayerHandMenu getPlayerHandMenu() {
+        return playerHandMenu;
+    }
+
     public MonsterActor getMonsterActor() {
         return monsterActor;
+    }
+
+    public Hud getHud() {
+        return hud;
     }
 }

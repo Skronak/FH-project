@@ -1,13 +1,7 @@
 package com.ohmy.game.manager;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.ohmy.game.Constants;
-import com.ohmy.game.DialogEntity;
-import com.ohmy.game.actor.DialogGroup;
+import com.ohmy.game.dto.CardDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,24 +16,24 @@ public class DialogManager {
         this.assetManager=assetManager;
     }
 
-    public List<DialogEntity> initAtkDialogHand() {
-       List<DialogEntity> dialogEntities=new ArrayList<DialogEntity>();
+    public List<CardDTO> initAtkDialogHand() {
+       List<CardDTO> dialogEntities=new ArrayList<CardDTO>();
        int index =0;
        for (int i = 0; i< Constants.PLAYER_NB_DIALOG_ATK; i++) {
            index = (int)(Math.random() * (assetManager.getPlayerAttackList().size()-1));
-           DialogEntity dialogEntity = assetManager.getPlayerAttackList().get(index);
-           dialogEntities.add(dialogEntity);
+           CardDTO cardDTO = assetManager.getPlayerAttackList().get(index);
+           dialogEntities.add(cardDTO);
        }
        return dialogEntities;
     }
 
-    public List<DialogEntity> initDefDialogHand() {
-        List<DialogEntity> dialogEntities=new ArrayList<DialogEntity>();
+    public List<CardDTO> initDefDialogHand() {
+        List<CardDTO> dialogEntities=new ArrayList<CardDTO>();
         int index =0;
         for (int i = 0; i< Constants.PLAYER_NB_DIALOG_DEF; i++) {
             index = (int)(Math.random() * (assetManager.getPlayerDefendList().size()-1));
-            DialogEntity dialogEntity = assetManager.getPlayerDefendList().get(index);
-            dialogEntities.add(dialogEntity);
+            CardDTO cardDTO = assetManager.getPlayerDefendList().get(index);
+            dialogEntities.add(cardDTO);
         }
         return dialogEntities;
     }
@@ -54,14 +48,14 @@ public class DialogManager {
      * return 1: atk wins
      * return 2: def wins
      *
-     * @param dialogEntityAtk
-     * @param dialogEntityDef
+     * @param cardDTOAtk
+     * @param cardDTODef
      */
-    public int resolveDialogDuel(DialogEntity dialogEntityAtk, DialogEntity dialogEntityDef){
-        int atkValue = dialogEntityAtk.getVal();
-        int defValue = dialogEntityDef.getVal();
+    public int resolveDialogDuel(CardDTO cardDTOAtk, CardDTO cardDTODef){
+        int atkValue = cardDTOAtk.getVal();
+        int defValue = cardDTODef.getVal();
 
-        switch (dialogEntityAtk.getType()-dialogEntityAtk.getType()) {
+        switch (cardDTOAtk.getType()- cardDTOAtk.getType()) {
             case -2:  return 1;
             case -1:  return 2;
             case 0:  return 0;

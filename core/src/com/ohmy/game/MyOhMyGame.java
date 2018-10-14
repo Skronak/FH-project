@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.ohmy.game.manager.GameManager;
 import com.ohmy.game.manager.MyAssetManager;
 import com.ohmy.game.screen.LoadingScreen;
+import com.ohmy.game.screen.SplashScreen;
 
 public class MyOhMyGame extends Game {
 	private MyAssetManager assetManager;

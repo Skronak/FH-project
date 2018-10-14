@@ -1,6 +1,5 @@
 package com.ohmy.game.actor;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -12,7 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
-import com.ohmy.game.DialogEntity;
+import com.ohmy.game.dto.CardDTO;
+import com.ohmy.game.dto.MonsterDTO;
 import com.ohmy.game.manager.GameManager;
 
 import java.util.ArrayList;
@@ -38,9 +38,9 @@ public class MonsterActor extends Group {
     private int currentAttitude;
     private GameManager gameManager;
     private Label text;
-    private List<DialogEntity> atkDialogList;
-    private List<DialogEntity> respDialogList;
-    private DialogEntity currentDialogEntity;
+    private List<CardDTO> atkDialogList;
+    private List<CardDTO> respDialogList;
+    private CardDTO currentCardDTO;
     private int nextText;
     private Image nextImage;
     private Group dialogGroup;
@@ -51,7 +51,8 @@ public class MonsterActor extends Group {
         monsterBaseActor = new AnimatedBaseActor();
 
         dialogImage = new Image(gameManager.getAssetManager().get("sprite/bulle.png",Texture.class));
-        dialogImage.setPosition(250,this.getHeight()+350);
+        dialogImage.setSize(280,140);
+        dialogImage.setPosition(180,this.getHeight()+300);
 
         text = new Label("...", gameManager.getAssetManager().getSkin());
         text.setWrap(true);
@@ -73,7 +74,7 @@ public class MonsterActor extends Group {
 
         InputListener touchListener = new ClickListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (currentDialogEntity.getText().size()>1) {
+                if (currentCardDTO.getText().size()>1) {
                     speak(true);
                 } else {
                     speak(false);
@@ -106,13 +107,15 @@ public class MonsterActor extends Group {
         }
         angerAnimation = new Animation(0.5f,monsterAngerFramesList, Animation.PlayMode.LOOP_PINGPONG);
         monsterBaseActor.storeAnimation("anger", angerAnimation);
-        atkDialogList = new ArrayList<DialogEntity>();
-        atkDialogList = gameManager.getAssetManager().getDialogEntityList().get(id).getDialogEntityList();
+        atkDialogList = new ArrayList<CardDTO>();
+        atkDialogList = gameManager.getAssetManager().getCardDTOList().get(id).getCardDTOList();
 
         monsterBaseActor.setActiveAnimation("idle");
+        monsterBaseActor.setSize(monsterEntity.getWidth(), monsterEntity.getHeight());
+        setPosition(monsterEntity.getPosX(), monsterEntity.getPosY());
 
         resetAtkText();
-        text.setText(currentDialogEntity.getText().get(0));
+        text.setText(currentCardDTO.getText().get(0));
     }
 
     /**
@@ -121,9 +124,9 @@ public class MonsterActor extends Group {
     public void resetAtkText(){
         int index=0;
         index = (int)(Math.random() * (atkDialogList.size()-1));
-        currentDialogEntity = atkDialogList.get(index);
+        currentCardDTO = atkDialogList.get(index);
 
-        if (currentDialogEntity.getText().size()>1){
+        if (currentCardDTO.getText().size()>1){
             nextImage.setVisible(true);
         } else {
             nextImage.setVisible(false);
@@ -137,7 +140,7 @@ public class MonsterActor extends Group {
         dialogGroup.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
             @Override
             public void run() {
-                text.setText(currentDialogEntity.getText().get(0));
+                text.setText(currentCardDTO.getText().get(0));
             }
         }),Actions.fadeIn(0.5f)));
     }
@@ -145,15 +148,15 @@ public class MonsterActor extends Group {
     public void resetRespText(){
         int index=0;
         index = (int)(Math.random() * (respDialogList.size()-1));
-        currentDialogEntity = atkDialogList.get(index);
+        currentCardDTO = atkDialogList.get(index);
         dialogGroup.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
             @Override
             public void run() {
-                text.setText(currentDialogEntity.getText().get(0));
+                text.setText(currentCardDTO.getText().get(0));
             }
         }),Actions.fadeIn(0.5f)));
 
-        if (currentDialogEntity.getText().size()>1){
+        if (currentCardDTO.getText().size()>1){
             nextImage.setVisible(true);
         } else {
             nextImage.setVisible(false);
@@ -167,10 +170,10 @@ public class MonsterActor extends Group {
         text.addAction(Actions.sequence(disapear?Actions.fadeOut(0.1f):Actions.delay(0), Actions.run(new Runnable() {
             @Override
             public void run() {
-                text.setText(currentDialogEntity.getText().get(nextText));
+                text.setText(currentCardDTO.getText().get(nextText));
             }
         }),Actions.fadeIn(0.3f)));
-        if (nextText<currentDialogEntity.getText().size()-1) {
+        if (nextText< currentCardDTO.getText().size()-1) {
             nextText++;
         } else {
             nextText=0;
@@ -185,17 +188,17 @@ public class MonsterActor extends Group {
         }
     }
 
-    public void setCurrentDialogEntity(DialogEntity currentDialogEntity) {
-        this.currentDialogEntity = currentDialogEntity;
+    public void setCurrentCardDTO(CardDTO currentCardDTO) {
+        this.currentCardDTO = currentCardDTO;
 
-        if (currentDialogEntity.getText().size()>1) {
+        if (currentCardDTO.getText().size()>1) {
             nextImage.setVisible(true);
         } else {
             nextImage.setVisible(false);
         }
     }
 
-    public DialogEntity getCurrentDialogEntity() {
-        return currentDialogEntity;
+    public CardDTO getCurrentCardDTO() {
+        return currentCardDTO;
     }
 }

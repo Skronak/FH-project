@@ -9,7 +9,11 @@
     "hp":100,
     "calmRate":5,
     "angerRate":10,
-    "pleasedRate":10
+    "pleasedRate":10,
+    "posX":800,
+    "posY":200,
+    "height":380,
+    "width":410
   },
   {
     "id":1,
@@ -18,7 +22,7 @@
     "angerFrames":["monster1_anger.png"],
     "dialogImage":"bulle.png",
     "dialogTxtId":2,
-    "hp":100,
+    "hp":200,
     "calmRate":5,
     "angerRate":10,
     "pleasedRate":10

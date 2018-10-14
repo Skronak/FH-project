@@ -3,112 +3,112 @@
     "id":0,
     "counterId":0,
     "text":["Tu peux pas te payer des pantalons plus longs. "],
-    "type":0,
+    "type":1,
     "val":10
   },
   {
     "id":1,
     "counterId":0,
     "text":["Tu te bats comme un boeuf"],
-    "type":0,
+    "type":1,
     "val":10
   },
   {
     "id":2,
     "counterId":0,
     "text":["Bave pas comme ça, ton epee va deraper !"],
-    "type":0,
+    "type":2,
     "val":10
   },
   {
     "id":3,
     "counterId":0,
     "text":["J'avais un chien qui etait plus intelligent que toi"],
-    "type":0,
+    "type":3,
     "val":10
   },
   {
     "id":4,
     "counterId":0,
     "text":["Sous peu, je vais t'embrocher avec mon epee !"],
-    "type":0,
+    "type":4,
     "val":10
   },
   {
     "id":5,
     "counterId":0,
     "text":["Ça se voit que l'alcool t'as imbibe le cerveau"],
-    "type":0,
+    "type":5,
     "val":10
   },
   {
     "id":6,
     "counterId":0,
     "text":["Les gens tombent comme des mouches quand j'arrive"],
-    "type":0,
+    "type":1,
     "val":10
   },
   {
     "id":7,
     "counterId":0,
     "text":["Je vais t'aider a te raser !"],
-    "type":0,
+    "type":2,
     "val":10
   },
   {
     "id":8,
     "counterId":0,
     "text":["Tu peux pas te payer des pantalons plus longs. "],
-    "type":0,
+    "type":3,
     "val":10
   },
   {
     "id":9,
     "counterId":0,
     "text":["Ta voix n'a pas encore muee"],
-    "type":0,
+    "type":4,
     "val":10
   },
   {
     "id":10,
     "counterId":0,
     "text":["J'ai parle a des singes qui etaient plus polis que toi"],
-    "type":0,
+    "type":5,
     "val":10
   },
   {
     "id":11,
     "counterId":0,
     "text":[ "Alors tu bafouilles quand tu parles aux femmes"],
-    "type": 0,
+    "type": 1,
     "val": 10
   },
   {
     "id":12,
     "counterId":0,
     "text":[ "Tu ne peux pas comparer ton esprit au mien, pauvre idiot"],
-    "type": 0,
+    "type": 2,
     "val": 10
   },
   {
     "id":13,
     "counterId":0,
     "text":[ "Je ne trouve pas de mot pour exprimer mon degoût"],
-    "type": 0,
+    "type": 3,
     "val": 10
   },
   {
     "id":14,
     "counterId":0,
     "text":[ "Tu te comportes comme un mendiant"],
-    "type": 0,
+    "type": 4,
     "val": 10
   },
   {
     "id":15,
     "counterId":0,
     "text":[ "Tu portes encore des couches ?"],
-    "type": 0,
+    "type": 5,
     "val": 10
   }
 ]
