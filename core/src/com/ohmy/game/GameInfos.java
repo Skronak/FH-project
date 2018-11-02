@@ -1,7 +1,6 @@
 package com.ohmy.game;
 
-import com.ohmy.game.cards.AbstractCard;
-import com.ohmy.game.dto.CardDTO;
+import com.ohmy.game.cards.Card;
 import com.ohmy.game.manager.GameManager;
 
 import java.util.ArrayList;
@@ -11,79 +10,34 @@ import java.util.List;
  * Classe de jeu sauvegardant les informations de la partie en cours
  */
 public class GameInfos {
+
     // Current game data
-    private int currentState;
-    private List<CardDTO> availablePlayerAttackList;
-    private List<CardDTO> availablePlayerDefendList;
-    private List<CardDTO> availableMonsterAttackList;
-    private List<CardDTO> availableMonsterDefendList;
+    private GameState currentState;
     private GameManager gameManager;
-    private List<AbstractCard> playerHand;
-    private List<AbstractCard> enemyHand;
+    private List<Card> playerHand;
+    private List<Card> enemyHand;
+    private List<Card> playerDeck;
+    private List<Card> enemyDeck;
+    private List<PlayedCardHistory> playedCardHistories;
     private int enemyHP;
     private int playerHP;
+    private int currentEnemyId;
 
     public GameInfos(GameManager gameManager) {
         this.gameManager = gameManager;
-        currentState = 0;
-        availablePlayerAttackList = new ArrayList<CardDTO>();
-        availablePlayerDefendList = new ArrayList<CardDTO>();
-        availableMonsterAttackList = new ArrayList<CardDTO>();
-        availableMonsterDefendList = new ArrayList<CardDTO>();
-
-        resetDialogList();
+        currentState = GameState.GAME_INIT_BATTLE;
+        playerHand = new ArrayList<Card>();
+        enemyHand = new ArrayList<Card>();
+        playedCardHistories = new ArrayList<PlayedCardHistory>();
+        currentState=GameState.GAME_INIT_BATTLE;
     }
 
-    private void resetDialogList(){
-        int index=0;
-        for (int i = 0; i< Constants.PLAYER_NB_DIALOG_ATK; i++) {
-            index = (int)(Math.random() * (gameManager.getAssetManager().getPlayerAttackList().size()-1));
-            availablePlayerAttackList.add(gameManager.getAssetManager().getPlayerAttackList().get(index));
-        }
-        for (int i = 0; i< Constants.PLAYER_NB_DIALOG_DEF; i++) {
-            index = (int)(Math.random() * (gameManager.getAssetManager().getPlayerAttackList().size()-1));
-            availablePlayerDefendList.add(gameManager.getAssetManager().getPlayerDefendList().get(index));
-        }
-    }
-
-    public int getCurrentState() {
+    public GameState getCurrentState() {
         return currentState;
     }
 
-    public void setCurrentState(int currentState) {
+    public void setCurrentState(GameState currentState) {
         this.currentState = currentState;
-    }
-
-    public List<CardDTO> getAvailablePlayerAttackList() {
-        return availablePlayerAttackList;
-    }
-
-    public void setAvailablePlayerAttackList(List<CardDTO> availablePlayerAttackList) {
-        this.availablePlayerAttackList = availablePlayerAttackList;
-    }
-
-    public List<CardDTO> getAvailablePlayerDefendList() {
-        return availablePlayerDefendList;
-    }
-
-    public void setAvailablePlayerDefendList(List<CardDTO> availablePlayerDefendList) {
-        this.availablePlayerDefendList = availablePlayerDefendList;
-    }
-
-    public List<CardDTO> getAvailableMonsterDefendList() {
-        return availableMonsterDefendList;
-    }
-
-    public void setAvailableMonsterDefendList(List<CardDTO> availableMonsterDefendList) {
-        this.availableMonsterDefendList = availableMonsterDefendList;
-    }
-
-    public List<CardDTO> getAvailableMonsterAttackList() {
-        return availableMonsterAttackList;
-    }
-
-    public void setAvailableMonsterAttackList(List<CardDTO> availableMonsterAttackList) {
-        this.availableMonsterAttackList = availableMonsterAttackList;
     }
 
     public int getEnemyHP() {
@@ -100,5 +54,45 @@ public class GameInfos {
 
     public void setPlayerHP(int playerHP) {
         this.playerHP = playerHP;
+    }
+
+    public List<Card> getPlayerHand() {
+        return playerHand;
+    }
+
+    public void setPlayerHand(List<Card> playerHand) {
+        this.playerHand = playerHand;
+    }
+
+    public List<Card> getEnemyHand() {
+        return enemyHand;
+    }
+
+    public void setEnemyHand(List<Card> enemyHand) {
+        this.enemyHand = enemyHand;
+    }
+
+    public int getCurrentEnemyId() {
+        return currentEnemyId;
+    }
+
+    public void setCurrentEnemyId(int currentEnemyId) {
+        this.currentEnemyId = currentEnemyId;
+    }
+
+    public List<Card> getPlayerDeck() {
+        return playerDeck;
+    }
+
+    public void setPlayerDeck(List<Card> playerDeck) {
+        this.playerDeck = playerDeck;
+    }
+
+    public List<Card> getEnemyDeck() {
+        return enemyDeck;
+    }
+
+    public void setEnemyDeck(List<Card> enemyDeck) {
+        this.enemyDeck = enemyDeck;
     }
 }

@@ -13,17 +13,21 @@ public class Constants {
     // Taille virtuelle horizontale de l'application
     public static final int V_HEIGHT = 720;
 
-    public static final int PLAYER_NB_DIALOG_ATK = 5;
+    public static final int PLAYER_MAX_CARDS = 5;
+
+    public static final int ENEMY_MAX_CARDS = 5;
 
     public static final int PLAYER_NB_DIALOG_DEF = 5;
 
     public static final int SCREEN_PLAYER_DIALOG_PADDING = 80;
 
-    public static final int STATE_PLAYER_ATK = 0;
-    public static final int STATE_PLAYER_RESPOND = 1;
-    public static final int STATE_ENEMY_ATTK = 2;
-    public static final int STATE_ENEMY_RESPOND = 3;
-    public static final int STATE_END_TURN = 4;
+    public static final int GAME_INIT_BATTLE = 0;
+    public static final int PLAYER_TURN_BEGIN = 1;
+    public static final int PLAYER_TURN_ACTION = 2;
+    public static final int PLAYER_TURN_END = 3;
+    public static final int ENEMY_TURN_BEGIN =4;
+    public static final int ENEMY_TURN_ACTION = 5;
+    public static final int ENEMY_TURN_END = 6;
 
     public static final int ASSET_LOAD_MISC=0;
     public static final int ASSET_LOAD_TEXTURE=1;

@@ -6,10 +6,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Json;
-import com.ohmy.game.dto.CardDTO;
-import com.ohmy.game.CardDTOList;
-import com.ohmy.game.MyOhMyGame;
+import com.ohmy.game.cards.Card;
 import com.ohmy.game.dto.MonsterDTO;
+import com.ohmy.game.dto.CardList;
+import com.ohmy.game.MyOhMyGame;
+
 
 import java.util.ArrayList;
 
@@ -19,10 +20,8 @@ public class MyAssetManager implements Disposable {
     private MyOhMyGame game;
     private Skin skin;
     private int currentStatus;
-
-    private ArrayList<CardDTO> playerAttackList;
-    private ArrayList<CardDTO> playerDefendList;
-    private ArrayList<CardDTOList> cardDTOList;
+    private ArrayList<Card> playerCardList;
+    private ArrayList<CardList> enemyCardList;
     private ArrayList<MonsterDTO> monsterList;
 
     public MyAssetManager(MyOhMyGame game) {
@@ -53,14 +52,12 @@ public class MyAssetManager implements Disposable {
 
     public void loadJSONFile(){
         Json json = new Json();
-        playerAttackList = new ArrayList<CardDTO>();
-        playerAttackList = json.fromJson(ArrayList.class, CardDTO.class, Gdx.files.internal("json/player_attack.json"));
 
-        playerDefendList = new ArrayList<CardDTO>();
-        playerDefendList = json.fromJson(ArrayList.class, CardDTO.class, Gdx.files.internal("json/player_respond.json"));
+        playerCardList = new ArrayList<Card>();
+        playerCardList = json.fromJson(ArrayList.class, Card.class, Gdx.files.internal("json/player_attack.json"));
 
-        cardDTOList = new ArrayList<CardDTOList>();
-        cardDTOList = json.fromJson(ArrayList.class, CardDTOList.class, Gdx.files.internal("json/monsterAtk1.json"));
+        enemyCardList = new ArrayList<CardList>();
+        enemyCardList = json.fromJson(ArrayList.class, CardList.class, Gdx.files.internal("json/monsterAtk1.json"));
 
         monsterList = new ArrayList<MonsterDTO>();
         monsterList = json.fromJson(ArrayList.class, MonsterDTO.class, Gdx.files.internal("json/monster.json"));
@@ -90,14 +87,6 @@ public class MyAssetManager implements Disposable {
         assetManager.dispose();
     }
 
-    public ArrayList<CardDTO> getPlayerAttackList() {
-        return playerAttackList;
-    }
-
-    public ArrayList<CardDTO> getPlayerDefendList() {
-        return playerDefendList;
-    }
-
     public int getCurrentStatus() {
         return currentStatus;
     }
@@ -110,7 +99,23 @@ public class MyAssetManager implements Disposable {
         return monsterList;
     }
 
-    public ArrayList<CardDTOList> getCardDTOList() {
-        return cardDTOList;
+    public ArrayList<Card> getPlayerCardList() {
+        return playerCardList;
+    }
+
+    public void setPlayerCardList(ArrayList<Card> playerCardList) {
+        this.playerCardList = playerCardList;
+    }
+
+    public ArrayList<CardList> getEnemyCardList() {
+        return enemyCardList;
+    }
+
+    public void setEnemyCardList(ArrayList<CardList> enemyCardList) {
+        this.enemyCardList = enemyCardList;
+    }
+
+    public void setMonsterList(ArrayList<MonsterDTO> monsterList) {
+        this.monsterList = monsterList;
     }
 }

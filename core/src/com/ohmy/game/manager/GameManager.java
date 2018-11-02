@@ -11,7 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.ohmy.game.Constants;
-import com.ohmy.game.dto.CardDTO;
+import com.ohmy.game.GameState;
+import com.ohmy.game.cards.Card;
 import com.ohmy.game.GameInfos;
 import com.ohmy.game.actor.DialogGroup;
 import com.ohmy.game.dto.MonsterDTO;
@@ -29,43 +30,46 @@ public class GameManager {
     private PlayerInfo playerInfo;
     private GameScreen gameScreen;
     private DialogManager dialogManager;
-    private TurnManager turnManager;
     private Hud hud;
     private GameInfos gameInfos;
     private MyAssetManager assetManager;
     private CardManager cardManager;
     private ArrayList<ScriptedEvent> scriptedEvents;//parcours et execute
-
-    private CardDTO playerCardDTO;
-    private CardDTO monsterCardDTO;
+    private boolean playerPlayedFirst;
+    private Card playerCard;
+    private Card monsterCard;
     private TextButton withdrawHandTB;
+    private boolean isPlayer1Playing;
+
 
     public GameManager (MyOhMyGame game) {
-        assetManager = new MyAssetManager(game);
         this.game = game;
+        assetManager = new MyAssetManager(game);
         hud = new Hud(this);
         dialogManager = new DialogManager(assetManager);
         cardManager = new CardManager(this);
-
         playerInfo = new PlayerInfo();
+        gameInfos = new GameInfos(this);
+
         gameScreen = new GameScreen(this);
-        turnManager = new TurnManager();
-//        withdrawHandTB = new TextButton("Withdraw", assetManager.getSkin());
+
+    }
+
+    public void initGame() {
+        initPlayersDeck();
+        initMonsterActor(0);
     }
 
     public void playCinematic(){
-
     }
 
-
-    public void initGame() {
-        gameInfos = new GameInfos(this);
-
-        // INIT THE SCENE
-        initMonsterActor(0);
-        initPlayerHand();
-
-        // BEGIN THE GAME
+    /**
+     * Debut du combat
+     * exemple: choix joueur qui commence aleatoire
+     * ou ajout buff etc
+     */
+    public void startGame() {
+        gameInfos.setCurrentState(GameState.GAME_TURN_BEGIN);
         executeTurn();
     }
 
@@ -73,38 +77,88 @@ public class GameManager {
      * Handle a turn depending on the
      * game current state
      */
-    public void executeTurn(){
+    public void executeTurn() {
+        Gdx.app.debug("GameManager", "executeTurn: "+gameInfos.getCurrentState());
         switch (gameInfos.getCurrentState()) {
-            case Constants.STATE_PLAYER_ATK :
+            case GAME_INIT_BATTLE:
+                initGame();
+                playCinematic();
+                startGame();
+                break;
+            case GAME_TURN_BEGIN:
+                selectFirstToPlay();
+                initHands();
+            case PLAYER_TURN_BEGIN:
+                isPlayer1Playing=true;
+                //debug
+//                executeTurn();
+                break;
+            case PLAYER_TURN_ACTION :
                 hidePlayerDialogGroup();
-                resetPlayerDialogGroup();
-//                showPlayerDialogGroup();
+//                resetPlayerDialogGroup();
+                showPlayerDialogGroup();
                 break;
-            case Constants.STATE_ENEMY_RESPOND:
+            case PLAYER_TURN_END:
+                isPlayer1Playing=false;
+                break;
+            case ENEMY_TURN_BEGIN:
                 generateMonsterRespons();
+             break;
+            case ENEMY_TURN_ACTION:
                 break;
-            case Constants.STATE_PLAYER_RESPOND:
-                break;
-            case Constants.STATE_ENEMY_ATTK:
+                case ENEMY_TURN_END:
                 break;
         }
     }
 
+    /**
+     * Alterne le premier joueur a jouer et
+     * met à jour le gameInfos.currentState
+     */
+    public void selectFirstToPlay(){
+        if (playerPlayedFirst) {
+            gameInfos.setCurrentState(GameState.ENEMY_TURN_BEGIN);
+            playerPlayedFirst=false;
+        } else {
+            gameInfos.setCurrentState(GameState.PLAYER_TURN_BEGIN);
+            playerPlayedFirst = false;
+        }
+    }
+
+    public void initPlayersDeck() {
+        List<Card> playerDeck = cardManager.shuffleDeck(assetManager.getPlayerCardList());
+        List<Card> enemyDeck = cardManager.shuffleDeck(assetManager.getEnemyCardList().get(gameInfos.getCurrentEnemyId()).getCardList());
+        gameInfos.setPlayerDeck(playerDeck);
+        gameInfos.setEnemyDeck(enemyDeck);
+
+        // TODO: Replaced by cardManager.completPlayerHand & manual removing in gameManager
+        //for (int i = 0; i< Constants.PLAYER_MAX_CARDS; i++) {
+        //    Card card = cardManager.pickCard(gameInfos.getPlayerDeck());
+        //    gameInfos.getPlayerDeck().remove(card);
+        //    gameInfos.getPlayerHand().add(card);
+        //}
+        //for (int i = 0; i< Constants.ENEMY_MAX_CARDS; i++) {
+        //    Card card = cardManager.pickCard(gameInfos.getEnemyDeck());
+        //    gameInfos.getEnemyDeck().remove(card);
+        //    gameInfos.getEnemyHand().add(card);
+        //}
+    }
+
     private void withdrawCard(DialogGroup dialogGroup){
         cardManager.withdrawCard(dialogGroup);
-        cardManager.drawCard();
+        cardManager.pickCard(gameInfos.getPlayerHand());
     }
 
     /**
      * Genere une ligne de dialog pour le joueur
-     * @param cardDTO
+     * @param card
      * @param positiony
      * @return
      */
-    private Group generateDialogOption(CardDTO cardDTO, int positiony) {
+    private Group generateDialogOption(Card card, int positiony) {
         Image image = new Image(assetManager.get("sprite/green.jpg",Texture.class));
-        Image typeImage = new Image(assetManager.get("sprite/type"+ cardDTO.getType()+".png",Texture.class));
-        DialogGroup dialogGroup = new DialogGroup(image,typeImage,assetManager.getSkin(), cardDTO, this, positiony);
+        Image typeImage = new Image(assetManager.get("sprite/type"+ card.getType()+".png",Texture.class));
+        DialogGroup dialogGroup = new DialogGroup(image,typeImage,assetManager.getSkin(), card, this, positiony);
         return dialogGroup;
     }
 
@@ -113,23 +167,23 @@ public class GameManager {
      * x DialogGroup aleatoire en fonction du currentState
      * TODO a revoir
      */
-    public void resetPlayerDialogGroup(){
-        gameScreen.getDialogHolderGroup().clear();
-        int index=0;
-        if(gameInfos.getCurrentState()==Constants.STATE_PLAYER_ATK) {
-            for (int i = 0; i< Constants.PLAYER_NB_DIALOG_ATK; i++) {
-                index = (int)(Math.random() * (assetManager.getPlayerAttackList().size()-1));
-                CardDTO cardDTO = assetManager.getPlayerAttackList().get(index);
-                gameScreen.getDialogHolderGroup().addActor(generateDialogOption(cardDTO,i+(Constants.SCREEN_PLAYER_DIALOG_PADDING*(1+i))));
-            }
-        } else if (gameInfos.getCurrentState()==Constants.STATE_PLAYER_RESPOND) {
-            for (int i = 0; i< Constants.PLAYER_NB_DIALOG_DEF; i++) {
-                index = (int)(Math.random() * (assetManager.getPlayerDefendList().size()-1));
-                CardDTO cardDTO = assetManager.getPlayerAttackList().get(index);
-                gameScreen.getDialogHolderGroup().addActor(generateDialogOption(cardDTO,i+(Constants.SCREEN_PLAYER_DIALOG_PADDING*(1+i))));
-            }
-        }
-    }
+    //public void resetPlayerDialogGroup(){
+    //    gameScreen.getDialogHolderGroup().clear();
+    //    int index=0;
+    //    if(gameInfos.getCurrentState()== GameState.) {
+    //        for (int i = 0; i< Constants.PLAYER_NB_DIALOG_ATK; i++) {
+    //            index = (int)(Math.random() * (assetManager.getPlayerAttackList().size()-1));
+    //            Card cardDTO = assetManager.getPlayerAttackList().get(index);
+    //            gameScreen.getDialogHolderGroup().addActor(generateDialogOption(cardDTO,i+(Constants.SCREEN_PLAYER_DIALOG_PADDING*(1+i))));
+    //        }
+    //    } else if (gameInfos.getCurrentState()==Constants.STATE_PLAYER_RESPOND) {
+    //        for (int i = 0; i< Constants.PLAYER_NB_DIALOG_DEF; i++) {
+    //            index = (int)(Math.random() * (assetManager.getPlayerDefendList().size()-1));
+    //            Card cardDTO = assetManager.getPlayerAttackList().get(index);
+    //            gameScreen.getDialogHolderGroup().addActor(generateDialogOption(cardDTO,i+(Constants.SCREEN_PLAYER_DIALOG_PADDING*(1+i))));
+    //        }
+    //    }
+    //}
 
     private void initTextButton(){
         InputListener buttonListener = new ClickListener(){
@@ -173,7 +227,6 @@ public class GameManager {
         }
     }
 
-
     public void generateMonsterRespons(){
         gameScreen.getMonsterActor().resetAtkText();
         gameScreen.getMonsterActor().switchText();
@@ -184,23 +237,30 @@ public class GameManager {
      * its on screen representation
      * @param id
      */
-    public void initMonsterActor(int id){
-        MonsterDTO monsterEntity = assetManager.getMonsterList().get(id);
-        gameScreen.getMonsterActor().init(monsterEntity);
-        gameInfos.setEnemyHP(monsterEntity.getHp());
+    public void initMonsterActor(int id) {
+        gameInfos.setCurrentEnemyId(id);
+        MonsterDTO monsterDTO = assetManager.getMonsterList().get(id);
+        gameScreen.getMonsterActor().init(monsterDTO);
+        gameInfos.setEnemyHP(monsterDTO.getHp());
         gameScreen.getHud().updateHpLabel();
     }
 
-    public void initPlayerHand(){
-        List<CardDTO> dialogEntities = dialogManager.initAtkDialogHand();
-        gameInfos.setAvailableMonsterDefendList(dialogEntities);
+    public void initHands() {
+        List<Card> cards = cardManager.completePlayerHand();
+        gameInfos.getPlayerHand().addAll(cards);
+        gameInfos.getPlayerDeck().removeAll(cards);
 
+        cards = cardManager.completeEnemyHand();
+        gameInfos.getEnemyHand().addAll(cards);
+        gameInfos.getEnemyDeck().removeAll(cards);
+
+        executeTurn();
     }
 
-    public void validatePlayerChoice(final CardDTO cardDTO) {
-        Gdx.app.debug("GameManager", "validatePlayerChoice: "+ cardDTO.getId()+": "+ cardDTO.getText());
+    public void validatePlayerChoice(final Card card) {
+        Gdx.app.debug("GameManager", "validatePlayerChoice: "+ card.getId()+": "+ card.getText());
 
-        playerCardDTO = cardDTO;
+        playerCard = card;
         gameScreen.getDialogHolderGroup().setTouchable(Touchable.disabled);
         gameScreen.getDialogHolderGroup().addAction(Actions.sequence(Actions.delay(1f),Actions.moveBy(0f,-500f,1f), Actions.run(new Runnable() {
             @Override
@@ -208,17 +268,17 @@ public class GameManager {
                 resolveAction();}})));
     }
 
-    public void swipeRight(CardDTO cardDTO){
+    public void swipeRight(Card card){
         Gdx.app.log("e","right");
     }
 
-    public void swipeLeft(CardDTO cardDTO){
+    public void swipeLeft(Card card){
 
     }
 
-    public void validateMonsterChoice(CardDTO cardDTO) {
-        Gdx.app.debug("GameManager", "validateMonsterChoice: "+ cardDTO.getText());
-        monsterCardDTO = gameScreen.getMonsterActor().getCurrentCardDTO();
+    public void validateMonsterChoice(Card card) {
+        Gdx.app.debug("GameManager", "validateMonsterChoice: "+ card.getText());
+        monsterCard = gameScreen.getMonsterActor().getCurrentCard();
         resolveAction();
     }
 
@@ -227,15 +287,14 @@ public class GameManager {
      */
     public void resolveAction() {
         int result=0;
-        if (null!= playerCardDTO && null!= monsterCardDTO){
-            result = dialogManager.resolveDialogDuel(monsterCardDTO, playerCardDTO);
-            gameInfos.setCurrentState(Constants.STATE_END_TURN);
-        } else if (null== monsterCardDTO) {
-            gameInfos.setCurrentState(Constants.STATE_ENEMY_RESPOND);
-        } else if (null== playerCardDTO) {
-            gameInfos.setCurrentState(Constants.STATE_PLAYER_RESPOND);
-        }
-        executeTurn();
+        if (null!= playerCard && null!= monsterCard){
+            result = dialogManager.resolveDialogDuel(monsterCard, playerCard);
+            gameInfos.setCurrentState(GameState.PLAYER_TURN_BEGIN);
+        } else if (null== monsterCard) {
+            gameInfos.setCurrentState(GameState.ENEMY_TURN_BEGIN);
+        }// else if (null== playerCard) {
+          //  gameInfos.setCurrentState(Constants.STATE_PLAYER_RESPOND);
+        //}
     }
 
     public void winDuel(){
@@ -260,6 +319,10 @@ public class GameManager {
 
     public MyAssetManager getAssetManager() {
         return assetManager;
+    }
+
+    public CardManager getCardManager() {
+        return cardManager;
     }
 
     public GameInfos getGameInfos() {

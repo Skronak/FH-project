@@ -1,0 +1,94 @@
+[
+  {
+    "id":0,
+    "cardList":
+    [{
+      "id":0,
+      "counterId":0,
+      "text":["Aujourd hui, j ai deja trucide douze quidams. ","you bastard","stop cliking on me"],
+      "type":0,
+      "val":10
+    },
+      {
+        "id":1,
+        "counterId":0,
+        "text":["J ai des muscles a des endroits dont tu n as jamais entendu parler.","you bastard","stop cliking on me"],
+        "type":0,
+        "val":10
+      },
+      {
+        "id":2,
+        "counterId":0,
+        "text":["Renonce maintenant ou je t ecrase comme une punaise !","you bastard","stop cliking on me"],
+        "type":0,
+        "val":10
+      },
+      {
+        "id":3,
+        "counterId":0,
+        "text":["Ma grand-mere de 98 ans a des bras plus muscles que les tiens !","you bastard","stop cliking on me"],
+        "type":0,
+        "val":10
+      },
+      {
+        "id":4,
+        "counterId":0,
+        "text":["Je vais te mettre le bras en echarpe !","you bastard","stop cliking on me"],
+        "type":0,
+        "val":10
+      },
+      {
+        "id":5,
+        "counterId":0,
+        "text":["Ma force stupefiante va briser ton cubitus en un million de morceaux !"],
+        "type":0,
+        "val":10
+      },
+      {
+        "id":6,
+        "counterId":0,
+        "text":["Tes doigts je vais en faire de la bouillie d os !"],
+        "type":0,
+        "val":10
+      },
+      {
+        "id":7,
+        "counterId":0,
+        "text":["Tes bras ne sont pas plus gros que ceux d une puce "],
+        "type":0,
+        "val":10
+      },
+      {
+        "id":8,
+        "counterId":0,
+        "text":["On me dit parfois que mes poings sont des armes fatales !"],
+        "type":0,
+        "val":10
+      },
+      {
+        "id":9,
+        "counterId":0,
+        "text":["Une seule fois j ai rencontre plus lâche que toi."],
+        "type":0,
+        "val":10
+      }]
+  },
+  {
+    "id":1,
+    "cardList":
+    [{
+      "id":0,
+      "counterId":0,
+      "text":["Aujourd hui, j ai deja trucide douze quidams. ","you bastard","stop cliking on me"],
+      "type":0,
+      "val":10
+    },
+      {
+        "id":1,
+        "counterId":0,
+        "text":["J ai des muscles a des endroits dont tu n as jamais entendu parler.","you bastard","stop cliking on me"],
+        "type":0,
+        "val":10
+      }]
+  }
+]

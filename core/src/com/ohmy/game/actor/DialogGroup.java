@@ -5,8 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ohmy.game.Constants;
-import com.ohmy.game.dto.CardDTO;
-import com.ohmy.game.input.CustomDragListener;
+import com.ohmy.game.cards.Card;
+import com.ohmy.game.input.CardDragListener;
 import com.ohmy.game.manager.GameManager;
 
 /**
@@ -19,9 +19,9 @@ public class DialogGroup extends Group {
     private GameManager gameManager;
     private boolean withdrawed;
 
-    public DialogGroup (Image image, Image typeImage, Skin skin, CardDTO cardDTO, GameManager gameManager, int positiony) {
+    public DialogGroup (Image image, Image typeImage, Skin skin, Card card, GameManager gameManager, int positiony) {
         Image fontImg = image;
-        text = new Label(cardDTO.getText().get(0), skin);
+        text = new Label(card.getText().get(0), skin);
         text.setWrap(true);
         text.setSize(image.getWidth(),image.getHeight());
         typeImage.setSize(20,20);
@@ -31,7 +31,7 @@ public class DialogGroup extends Group {
         this.addActor(typeImage);
 
         this.setPosition(Constants.V_WIDTH/2-image.getWidth()/2, positiony);
-        this.addListener(new CustomDragListener(this, gameManager, cardDTO));
+        this.addListener(new CardDragListener(this, gameManager, card));
         this.setDebug(true);
     }
 

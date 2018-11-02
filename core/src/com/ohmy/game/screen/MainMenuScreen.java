@@ -35,7 +35,7 @@ public class MainMenuScreen implements Screen {
         viewport = new StretchViewport(Constants.V_WIDTH, Constants.V_HEIGHT, camera);
         stage = new Stage(viewport);
 
-        TextButton textButton = new TextButton("Start game",game.getAssetManager().getSkin());
+
     }
 
     @Override

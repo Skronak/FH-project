@@ -16,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.ohmy.game.Constants;
 import com.ohmy.game.actor.MonsterActor;
-import com.ohmy.game.cards.AttackCard;
 import com.ohmy.game.manager.GameManager;
 import com.ohmy.game.ui.PlayerHandMenu;
 
@@ -77,9 +76,6 @@ public class GameScreen implements Screen {
         stage.addActor(playerHandMenu);
         //stage.setDebugAll(true);
 
-        gameManager.initGame();
-        gameManager.playCinematic();
-
         // Debug test
         TextButton textButton = new TextButton("Clik ON ME", gameManager.getAssetManager().getSkin());
         textButton.addListener(new InputListener(){
@@ -91,6 +87,8 @@ public class GameScreen implements Screen {
             }
         });
         stage.addActor(textButton);
+
+        gameManager.executeTurn();
     }
 
     @Override

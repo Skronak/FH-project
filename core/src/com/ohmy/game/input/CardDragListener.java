@@ -5,10 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.ohmy.game.cards.Card;
-import com.ohmy.game.dto.CardDTO;
 import com.ohmy.game.manager.GameManager;
 
-public class CustomDragListener extends InputListener {
+public class CardDragListener extends InputListener {
 
     private Group parentGroup;
     private float tapSquareSize = 14, touchDownX = -1, touchDownY = -1, stageTouchDownX = -1, stageTouchDownY = -1;
@@ -21,7 +20,7 @@ public class CustomDragListener extends InputListener {
     private GameManager gameManager;
     private boolean isSwipeLeft;
 
-    public CustomDragListener(Group group, GameManager gameManager, Card card){
+    public CardDragListener(Group group, GameManager gameManager, Card card){
         this.parentGroup = group;
         this.initialPosX = group.getX();
         this.initialPosy = group.getY();
@@ -78,10 +77,10 @@ public class CustomDragListener extends InputListener {
      * @param pointer
      */
     public void drag(InputEvent event, float x, float y, int pointer) {
-        this.parentGroup.moveBy(x-touchDownX - this.parentGroup.getWidth() / 2, 0);
         isSwipeLeft = initialPosX-parentGroup.getX()>0;
         float val = isSwipeLeft?initialPosX-parentGroup.getX():parentGroup.getX()-initialPosX;
-        float direction = initialPosX-parentGroup.getX()>0?-100:100;
+        this.parentGroup.moveBy(x-touchDownX - this.parentGroup.getWidth() / 2, 0);
+
         this.parentGroup.clearActions();
 
         if (val < 80) {
@@ -93,38 +92,52 @@ public class CustomDragListener extends InputListener {
         } else if (val < 150) {
             this.parentGroup.getColor().a = 0.4f;
         } else {
-            if (isSwipeLeft){
-                this.parentGroup.addAction(
-                        Actions.sequence(
-                                Actions.run(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        gameManager.swipeRight(card);
-                                        cancel();
-                                    }
-                                }),
-                                Actions.parallel(
-                                        Actions.moveBy(direction, 0, 0.5f), Actions.fadeOut(0.5f))
-                        )
-                );
-            } else {
-                this.parentGroup.addAction(
-                        Actions.sequence(
-                                Actions.run(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        gameManager.swipeLeft(card);
-                                        cancel();
-                                    }
-                                }),
-                                Actions.parallel(
-                                        Actions.moveBy(direction, 0, 0.5f), Actions.fadeOut(0.5f))
-                        )
-                );
-            }
+            executeAction(isSwipeLeft);
         }
     }
 
+    /**
+     * Add action to the parent regarding the swipe orientation
+     * @param isSwipeLeft
+     */
+    private void executeAction(boolean isSwipeLeft) {
+        float direction = initialPosX-parentGroup.getX()>0?-100:100;
+        if (isSwipeLeft){
+            Actions.sequence(
+                    Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            cancel();
+                        }}),
+                    Actions.parallel(
+                            Actions.moveBy(direction,0,0.5f),Actions.fadeOut(0.5f)
+                    ),
+                    Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            gameManager.swipeLeft(card);
+                        }
+                    })
+            );
+        } else {
+            Actions.sequence(
+                    Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            cancel();
+                        }}),
+                    Actions.parallel(
+                            Actions.moveBy(direction,0,0.5f),Actions.fadeOut(0.5f)
+                    ),
+                    Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            gameManager.swipeRight(card);
+                        }
+                    })
+            );
+        }
+    }
     /**
      * Add actor to the stage
      * @param event

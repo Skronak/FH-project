@@ -13,7 +13,7 @@ public class PlayerInfo {
     private int stageId;
 
     public PlayerInfo() {
-        prefs = Gdx.app.getPreferences("KaijuPreferences");
+        prefs = Gdx.app.getPreferences("OhMyPreferences");
 
         if (!prefs.contains("lastLogin")) {
             Gdx.app.debug("GameInformation", "Initialisation du compte par defaut");

@@ -2,14 +2,12 @@ package com.ohmy.game.ui;
 
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.ohmy.game.cards.AbstractCard;
+import com.ohmy.game.cards.CardHolderGroup;
 import com.ohmy.game.manager.GameManager;
 
 public class PlayerHandMenu extends VerticalGroup {
-    private GameManager gameManager;
 
     public PlayerHandMenu(GameManager gameManager) {
-        this.gameManager=gameManager;
     }
 
     public void generate(){
@@ -23,8 +21,8 @@ public class PlayerHandMenu extends VerticalGroup {
         pane.setScrollingDisabled(true, false);
     }
 
-    public void addCard(AbstractCard abstractCard){
-        addActor(abstractCard);
+    public void addCard(CardHolderGroup cardHolderGroup){
+        addActor(cardHolderGroup);
     }
 
     public void update(){

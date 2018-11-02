@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
-import com.ohmy.game.dto.CardDTO;
+import com.ohmy.game.cards.Card;
 import com.ohmy.game.dto.MonsterDTO;
 import com.ohmy.game.manager.GameManager;
 
@@ -38,9 +38,9 @@ public class MonsterActor extends Group {
     private int currentAttitude;
     private GameManager gameManager;
     private Label text;
-    private List<CardDTO> atkDialogList;
-    private List<CardDTO> respDialogList;
-    private CardDTO currentCardDTO;
+    private List<Card> atkDialogList;
+    private List<Card> respDialogList;
+    private Card currentCard;
     private int nextText;
     private Image nextImage;
     private Group dialogGroup;
@@ -74,7 +74,7 @@ public class MonsterActor extends Group {
 
         InputListener touchListener = new ClickListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (currentCardDTO.getText().size()>1) {
+                if (currentCard.getText().size()>1) {
                     speak(true);
                 } else {
                     speak(false);
@@ -107,15 +107,15 @@ public class MonsterActor extends Group {
         }
         angerAnimation = new Animation(0.5f,monsterAngerFramesList, Animation.PlayMode.LOOP_PINGPONG);
         monsterBaseActor.storeAnimation("anger", angerAnimation);
-        atkDialogList = new ArrayList<CardDTO>();
-        atkDialogList = gameManager.getAssetManager().getCardDTOList().get(id).getCardDTOList();
+        atkDialogList = new ArrayList<Card>();
+        atkDialogList = gameManager.getAssetManager().getEnemyCardList().get(id).getCardList();
 
         monsterBaseActor.setActiveAnimation("idle");
         monsterBaseActor.setSize(monsterEntity.getWidth(), monsterEntity.getHeight());
         setPosition(monsterEntity.getPosX(), monsterEntity.getPosY());
 
         resetAtkText();
-        text.setText(currentCardDTO.getText().get(0));
+        text.setText(currentCard.getText().get(0));
     }
 
     /**
@@ -124,9 +124,9 @@ public class MonsterActor extends Group {
     public void resetAtkText(){
         int index=0;
         index = (int)(Math.random() * (atkDialogList.size()-1));
-        currentCardDTO = atkDialogList.get(index);
+        currentCard = atkDialogList.get(index);
 
-        if (currentCardDTO.getText().size()>1){
+        if (currentCard.getText().size()>1){
             nextImage.setVisible(true);
         } else {
             nextImage.setVisible(false);
@@ -140,7 +140,7 @@ public class MonsterActor extends Group {
         dialogGroup.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
             @Override
             public void run() {
-                text.setText(currentCardDTO.getText().get(0));
+                text.setText(currentCard.getText().get(0));
             }
         }),Actions.fadeIn(0.5f)));
     }
@@ -148,15 +148,15 @@ public class MonsterActor extends Group {
     public void resetRespText(){
         int index=0;
         index = (int)(Math.random() * (respDialogList.size()-1));
-        currentCardDTO = atkDialogList.get(index);
+        currentCard = atkDialogList.get(index);
         dialogGroup.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
             @Override
             public void run() {
-                text.setText(currentCardDTO.getText().get(0));
+                text.setText(currentCard.getText().get(0));
             }
         }),Actions.fadeIn(0.5f)));
 
-        if (currentCardDTO.getText().size()>1){
+        if (currentCard.getText().size()>1){
             nextImage.setVisible(true);
         } else {
             nextImage.setVisible(false);
@@ -170,10 +170,10 @@ public class MonsterActor extends Group {
         text.addAction(Actions.sequence(disapear?Actions.fadeOut(0.1f):Actions.delay(0), Actions.run(new Runnable() {
             @Override
             public void run() {
-                text.setText(currentCardDTO.getText().get(nextText));
+                text.setText(currentCard.getText().get(nextText));
             }
         }),Actions.fadeIn(0.3f)));
-        if (nextText< currentCardDTO.getText().size()-1) {
+        if (nextText< currentCard.getText().size()-1) {
             nextText++;
         } else {
             nextText=0;
@@ -188,17 +188,17 @@ public class MonsterActor extends Group {
         }
     }
 
-    public void setCurrentCardDTO(CardDTO currentCardDTO) {
-        this.currentCardDTO = currentCardDTO;
+    public void setCurrentCard(Card currentCard) {
+        this.currentCard = currentCard;
 
-        if (currentCardDTO.getText().size()>1) {
+        if (currentCard.getText().size()>1) {
             nextImage.setVisible(true);
         } else {
             nextImage.setVisible(false);
         }
     }
 
-    public CardDTO getCurrentCardDTO() {
-        return currentCardDTO;
+    public Card getCurrentCard() {
+        return currentCard;
     }
 }

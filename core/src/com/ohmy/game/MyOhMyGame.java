@@ -2,18 +2,16 @@ package com.ohmy.game;
 
 import com.badlogic.gdx.Game;
 import com.ohmy.game.manager.GameManager;
-import com.ohmy.game.manager.MyAssetManager;
 import com.ohmy.game.screen.LoadingScreen;
-import com.ohmy.game.screen.SplashScreen;
 
 public class MyOhMyGame extends Game {
-	private MyAssetManager assetManager;
     private GameManager gameManager;
+    private GameInfos gameInfos;
 
 	@Override
 	public void create () {
 		gameManager = new GameManager(this);
-		setScreen(new LoadingScreen(this,true));
+        setScreen(new LoadingScreen(this,true));
 	}
 
 	@Override
@@ -23,10 +21,6 @@ public class MyOhMyGame extends Game {
 	
 	@Override
 	public void dispose () {
-	}
-
-	public MyAssetManager getAssetManager() {
-		return assetManager;
 	}
 
     public GameManager getGameManager() {

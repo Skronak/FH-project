@@ -6,30 +6,33 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.ohmy.game.Constants;
-import com.ohmy.game.dto.CardDTO;
-import com.ohmy.game.input.CustomDragListener;
+import com.ohmy.game.input.CardDragListener;
 import com.ohmy.game.manager.GameManager;
 
 /**
- * Defini la representation 2d d'une carte
- * son fils defini la logique
+ * Materialisation 2d d'une carte
+ *
  */
-public abstract class AbstractCard extends Group {
+public class CardHolderGroup extends Group {
     private Image image;
     private Image typeImage;
     private Label text;
     private GameManager gameManager;
     private boolean withdrawed;
-
+    private Card card;
     private int value;
     private int type;
 
-    public void initialize(Image image, Image typeImage, ImageButton imgButton, Skin skin, CardDTO cardDTO, GameManager gameManager, int positiony){
+    public CardHolderGroup(Card card){
+        this.card = card;
+    }
+
+    public void initialize(Image image, Image typeImage, ImageButton imgButton, Skin skin, Card card, GameManager gameManager, int positiony){
         Image fontImg = image;
         ImageButton imageButton = imgButton;
         imageButton.setPosition(fontImg.getWidth()-imageButton.getWidth(), 0);
         imageButton.setHeight(fontImg.getHeight());
-        text = new Label(cardDTO.getText().get(0), skin);
+        text = new Label(card.getText().get(0), skin);
         text.setWrap(true);
         text.setSize(image.getWidth(),image.getHeight());
         typeImage.setSize(20,20);
@@ -40,27 +43,12 @@ public abstract class AbstractCard extends Group {
         this.addActor(imageButton);
 
         this.setPosition(Constants.V_WIDTH/2-image.getWidth()/2, positiony);
-        this.addListener(new CustomDragListener(this, gameManager, cardDTO));
+        this.addListener(new CardDragListener(this, gameManager, card));
         this.setDebug(true);
     }
 
-    public Label getText() {
-        return text;
+    public void reinitialize(){
+
     }
 
-    public void setText(Label text) {
-        this.text = text;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
-    }
-
-    public boolean isWithdrawed() {
-        return withdrawed;
-    }
-
-    public void setWithdrawed(boolean withdrawed) {
-        this.withdrawed = withdrawed;
-    }
 }
