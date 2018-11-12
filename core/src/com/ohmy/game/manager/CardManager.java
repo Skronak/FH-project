@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.ohmy.game.Constants;
+import com.ohmy.game.GameInfos;
 import com.ohmy.game.cards.Card;
 import com.ohmy.game.actor.DialogGroup;
 
@@ -47,6 +48,7 @@ public class CardManager {
      */
     public Card pickCard(List<Card> deck) {
         Card card = deck.get(0);
+        deck.remove(0);
         return card;
     }
 
@@ -56,18 +58,18 @@ public class CardManager {
      */
     public List<Card> completePlayerHand() {
         List<Card> newCards = new ArrayList<Card>();
-        int nb = Constants.PLAYER_MAX_CARDS - gameManager.getGameInfos().getPlayerHand().size();
+        int nb = Constants.PLAYER_MAX_CARDS - GameInfos.INSTANCE.getPlayerHand().size();
         for (int i=0;i<nb;i++) {
-            newCards.add(gameManager.getGameInfos().getPlayerDeck().get(i));
+            newCards.add(GameInfos.INSTANCE.getPlayerDeck().get(i));
         }
         return newCards;
     }
 
     public List<Card> completeEnemyHand() {
         List<Card> newCards = new ArrayList<Card>();
-        int nb = Constants.ENEMY_MAX_CARDS - gameManager.getGameInfos().getEnemyHand().size();
+        int nb = Constants.ENEMY_MAX_CARDS - GameInfos.INSTANCE.getEnemyHand().size();
         for (int i=0;i<nb;i++) {
-            newCards.add(gameManager.getGameInfos().getEnemyDeck().get(i));
+            newCards.add(GameInfos.INSTANCE.getEnemyDeck().get(i));
         }
         return newCards;
     }
@@ -76,7 +78,7 @@ public class CardManager {
      * to redo
      */
     public void replaceWithdrawedCard(){
-        for (int i=0;i<=gameManager.getGameInfos().getPlayerHand().size();i++){
+        for (int i=0;i<=GameInfos.INSTANCE.getPlayerHand().size();i++){
             // Detect card to replace
             //if (((DialogGroup) gameManager.getGameScreen().getPlayerHandMenu().getChildren().get(i)).isWithdrawed()){
             //    int index = (int)(Math.random() * (gameManager.getAssetManager().getPlayerAttackList().size()-1));

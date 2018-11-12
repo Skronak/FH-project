@@ -12,10 +12,14 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.ohmy.game.Constants;
+import com.ohmy.game.GameInfos;
 import com.ohmy.game.actor.MonsterActor;
+import com.ohmy.game.cards.CardHolderGroup;
 import com.ohmy.game.manager.GameManager;
 import com.ohmy.game.ui.PlayerHandMenu;
 
@@ -44,8 +48,9 @@ public class GameScreen implements Screen {
         inputMultiplexer.addProcessor(stage);
 
         playerHandMenu = new PlayerHandMenu(gameManager);
+        playerHandMenu.init();
 
-        dialogHolderGroup = new Group();
+//        dialogHolderGroup = new Group();
 
         Gdx.input.setInputProcessor(stage);
     }
@@ -72,9 +77,8 @@ public class GameScreen implements Screen {
         stage.addActor(monsterActor);
         stage.addActor(backgroundImage);
         stage.addActor(characterImage);
-//        stage.addActor(dialogHolderGroup);
         stage.addActor(playerHandMenu);
-        //stage.setDebugAll(true);
+        stage.setDebugAll(true);
 
         // Debug test
         TextButton textButton = new TextButton("Clik ON ME", gameManager.getAssetManager().getSkin());
@@ -82,7 +86,12 @@ public class GameScreen implements Screen {
             @Override
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 monsterActor.updateMood();
-                gameManager.switchPlayerDialogGroup();
+                //gameManager.switchPlayerDialogGroup();
+                CardHolderGroup cardHolderGroup = new CardHolderGroup(GameInfos.INSTANCE.getPlayerHand().get(0));
+                Image image = new Image(gameManager.getAssetManager().get("sprite/yellow.jpg", Texture.class));
+                image.setWidth(Constants.PLAYER_CARD_WIDTH);
+                cardHolderGroup.initialize(image, image,gameManager,500);
+                playerHandMenu.addCard(cardHolderGroup);
                 return false;
             }
         });

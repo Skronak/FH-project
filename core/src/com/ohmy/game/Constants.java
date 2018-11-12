@@ -34,4 +34,7 @@ public class Constants {
     public static final int ASSET_LOAD_JSON=2;
     public static final int ASSET_LOAD_SOUND=3;
     public static final int ASSET_LOAD_COMPLETE=4;
+
+    public static final float PLAYER_CARD_HEIGHT = 55f;
+    public static final int PLAYER_CARD_WIDTH = 300;
 }

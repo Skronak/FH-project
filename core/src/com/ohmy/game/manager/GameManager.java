@@ -15,6 +15,7 @@ import com.ohmy.game.GameState;
 import com.ohmy.game.cards.Card;
 import com.ohmy.game.GameInfos;
 import com.ohmy.game.actor.DialogGroup;
+import com.ohmy.game.cards.CardHolderGroup;
 import com.ohmy.game.dto.MonsterDTO;
 import com.ohmy.game.event.ScriptedEvent;
 import com.ohmy.game.screen.GameScreen;
@@ -49,7 +50,7 @@ public class GameManager {
         dialogManager = new DialogManager(assetManager);
         cardManager = new CardManager(this);
         playerInfo = new PlayerInfo();
-        gameInfos = new GameInfos(this);
+        gameInfos = GameInfos.INSTANCE;
 
         gameScreen = new GameScreen(this);
 
@@ -103,10 +104,10 @@ public class GameManager {
                 break;
             case ENEMY_TURN_BEGIN:
                 generateMonsterRespons();
-             break;
+                break;
             case ENEMY_TURN_ACTION:
                 break;
-                case ENEMY_TURN_END:
+            case ENEMY_TURN_END:
                 break;
         }
     }
@@ -293,7 +294,7 @@ public class GameManager {
         } else if (null== monsterCard) {
             gameInfos.setCurrentState(GameState.ENEMY_TURN_BEGIN);
         }// else if (null== playerCard) {
-          //  gameInfos.setCurrentState(Constants.STATE_PLAYER_RESPOND);
+        //  gameInfos.setCurrentState(Constants.STATE_PLAYER_RESPOND);
         //}
     }
 
@@ -323,9 +324,5 @@ public class GameManager {
 
     public CardManager getCardManager() {
         return cardManager;
-    }
-
-    public GameInfos getGameInfos() {
-        return gameInfos;
     }
 }

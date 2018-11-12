@@ -16,7 +16,10 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.ohmy.game.Constants;
+import com.ohmy.game.GameInfos;
 import com.ohmy.game.manager.GameManager;
+
+import java.util.Random;
 
 public class Hud implements Disposable {
 
@@ -41,7 +44,7 @@ public class Hud implements Disposable {
 
 
     public void updateHpLabel(){
-        hpLabel.setText(String.valueOf(gameManager.getGameInfos().getEnemyHP())+" HP");
+        hpLabel.setText(String.valueOf(GameInfos.INSTANCE.getEnemyHP())+" HP");
     }
     /**
      * Methode draw specifique

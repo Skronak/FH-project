@@ -22,33 +22,27 @@ public class CardHolderGroup extends Group {
     private Card card;
     private int value;
     private int type;
+    private int positionY;
 
     public CardHolderGroup(Card card){
         this.card = card;
     }
 
-    public void initialize(Image image, Image typeImage, ImageButton imgButton, Skin skin, Card card, GameManager gameManager, int positiony){
+    public void initialize(Image image, Image typeImage, GameManager gameManager, int positiony){
         Image fontImg = image;
-        ImageButton imageButton = imgButton;
-        imageButton.setPosition(fontImg.getWidth()-imageButton.getWidth(), 0);
-        imageButton.setHeight(fontImg.getHeight());
-        text = new Label(card.getText().get(0), skin);
+        text = new Label(card.getText().get(0), gameManager.getAssetManager().getSkin());
         text.setWrap(true);
         text.setSize(image.getWidth(),image.getHeight());
-        typeImage.setSize(20,20);
+        typeImage.setSize(text.getWidth(),50);
         text.setAlignment(1,1);
         this.addActor(fontImg);
         this.addActor(text);
         this.addActor(typeImage);
-        this.addActor(imageButton);
-
-        this.setPosition(Constants.V_WIDTH/2-image.getWidth()/2, positiony);
+//        this.setPosition(Constants.V_WIDTH/2-image.getWidth()/2, positiony);
         this.addListener(new CardDragListener(this, gameManager, card));
-        this.setDebug(true);
     }
 
     public void reinitialize(){
-
     }
 
 }
